@@ -1,0 +1,32 @@
+---
+require:
+  - standard
+
+plugins:
+  - rubocop-performance
+  - rubocop-rails
+  - standard-custom
+  - standard-performance
+  - standard-rails
+
+inherit_gem:
+  standard: config/base.yml
+  standard-custom: config/base.yml
+  standard-performance: config/base.yml
+  standard-rails: config/base.yml
+
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "bin/*"
+    - "db/schema.rb"
+    - "storage/**/*"
+    - "tmp/**/*"
+    - "vendor/**/*"
+    - "engines/*/bin/*"
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always_true
