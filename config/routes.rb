@@ -13,4 +13,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  mount DlpAdmin::Engine, at: "/admin", as: :dlp_admin
 end
