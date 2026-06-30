@@ -1,0 +1,63 @@
+---
+x-local-plan: &local-plan
+  build: .
+  working_dir: /rails
+  init: true
+  stdin_open: true
+  tty: true
+  restart: always
+  depends_on:
+    - db
+  environment:
+    DATABASE_URL: postgres://postgres:postgres@db:5432
+    PIDFILE: /tmp/pids/server.pid
+  volumes:
+    - type: bind
+      source: .
+      target: /rails
+    - type: volume
+      source: bundle
+      target: /usr/local/bundle
+    - type: volume
+      source: node_modules
+      target: /rails/node_modules
+    - type: tmpfs
+      target: /tmp/pids
+      tmpfs:
+        mode: 0777
+
+services:
+  db:
+    image: postgres:16-trixie
+    command: >
+      -c ssl=on
+      -c ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+      -c ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  web:
+    <<: *local-plan
+    command: ["bin/dev"]
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  console:
+    <<: *local-plan
+    command: ["/bin/bash"]
+    profiles:
+      - console
+
+volumes:
+  db:
+  bundle:
+  node_modules:
