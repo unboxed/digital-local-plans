@@ -2,7 +2,10 @@
   "name": "app",
   "private": true,
   "devDependencies": {
-    "esbuild": "^0.28.1"
+    "@biomejs/biome": "^2.5.2",
+    "@herb-tools/linter": "^0.10.1",
+    "esbuild": "^0.28.1",
+    "prettier": "^3.9.4"
   },
   "scripts": {
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",

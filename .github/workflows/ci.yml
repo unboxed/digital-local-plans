@@ -47,8 +47,14 @@ jobs:
           restore-keys: |
             rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
 
-      - name: Lint code for consistent style
-        run: bin/rubocop -f github
+      - name: Lint Ruby for consistent style
+        run: bin/rake lint:rubocop
+      - name: Lint ERB for consistent style
+        run: bin/rake lint:herb
+      - name: Lint Sass and Yaml for consistent style
+        run: bin/rake lint:prettier
+      - name: Lint Javascript and JSON for consistent style
+        run: bin/rake lint:biome
 
   test:
     runs-on: ubuntu-latest
