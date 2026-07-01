@@ -1,1 +1,12 @@
 // Entry point for your Sass build
+
+// Imports from node_modules
+@use "govuk-frontend/dist/govuk" as * with (
+  $govuk-assets-path: "govuk-frontend/dist/govuk/assets/",
+  $govuk-font-family: (
+    open-sans,
+    sans-serif,
+  )
+);
+
+@use "fonts";

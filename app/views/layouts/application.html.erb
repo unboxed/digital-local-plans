@@ -1,29 +1,56 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en" class="govuk-template app-html-class">
   <head>
-    <title><%= content_for(:title) || "Digital Local Plan" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Digital Local Plan">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta charset="utf-8">
+
+    <title>
+      <% if content_for?(:page_title) %>
+        <%= yield(:page_title) %> —
+      <% end %>
+      Digital Local Plan
+    </title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= yield :head %>
+    <meta name="theme-color" content="#1d70b8">
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico">
+    <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml" >
+    <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
+    <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="#1d70b8" >
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= stylesheet_link_tag :app, media: "all" %>
+    <%= javascript_include_tag "application", nonce: true %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="govuk-template__body">
+    <%= javascript_tag nonce: true do %>
+      document.body.className += ' js-enabled' + ('noModule' in
+      HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    <% end %>
+
+    <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+    <%= govuk_generic_header(logo_text: 'Digital Local Plan', url: '/') do |header|
+       header.with_phase_banner(tag: { text: "Alpha" }, text: "This is a new service – your feedback will help us to improve it.")
+    end %>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <% if content_for?(:page_title) %>
+          <h1 class="govuk-heading-xl"><%= yield :page_title %></h1>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
+
+    <%= govuk_footer(copyright_text: "", meta_licence: "") %>
   </body>
 </html>

@@ -47,7 +47,7 @@ services:
 
   web:
     <<: *local-plan
-    command: ["bin/dev"]
+    command: ["bin/docker-entrypoint", "bin/dev"]
     ports:
       - "127.0.0.1:3000:3000"
 
