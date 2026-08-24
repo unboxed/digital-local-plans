@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+export PATH="/usr/local/node/bin:$PATH"
+
 bundle check || bundle install
 
 # If running the rails server then create or migrate existing database
