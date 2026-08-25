@@ -9,6 +9,7 @@ x-local-plan: &local-plan
   depends_on:
     - db
   environment:
+    RAILS_ENV: development
     DATABASE_URL: postgres://postgres:postgres@db:5432
     PIDFILE: /tmp/pids/server.pid
   volumes:
