@@ -45,7 +45,7 @@ group :development, :test do
 
   gem "rspec-rails", "~> 8.0.0"
 
-  gem "standard", "~> 1.36", require: false
+  gem "standard", "~> 1.56", require: false
   gem "standard-custom", require: false
   gem "standard-performance", require: false
   gem "standard-rails", require: false
