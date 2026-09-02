@@ -57,3 +57,5 @@ group :development do
 end
 
 gem "dlp_admin", path: "engines/dlp_admin"
+
+gem "devise", "~> 5.0"

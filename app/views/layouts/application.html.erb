@@ -43,6 +43,9 @@
     end %>
 
     <div class="govuk-width-container">
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
+
       <main class="govuk-main-wrapper" id="main-content">
         <% if content_for?(:page_title) %>
           <h1 class="govuk-heading-xl"><%= yield :page_title %></h1>
