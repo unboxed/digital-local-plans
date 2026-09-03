@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_02_151528) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_03_081124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_151528) do
     t.string "name"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_organisations_on_email", unique: true
+  end
+
+  create_table "timetable_events", force: :cascade do |t|
+    t.date "actual_date"
+    t.datetime "created_at", null: false
+    t.date "entry_date", null: false
+    t.date "event_date", null: false
+    t.text "notes"
+    t.string "plan", null: false
+    t.string "plan_event", null: false
+    t.string "reference", null: false
+    t.bigint "timetable_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["timetable_id"], name: "index_timetable_events_on_timetable_id"
+  end
+
+  create_table "timetables", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "dataset", null: false
+    t.text "description", null: false
+    t.string "document_url", null: false
+    t.string "documentation_url", null: false
+    t.date "entry_date", null: false
+    t.string "local_planning_authorities", null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.bigint "organisation_id", null: false
+    t.string "period_end_date", null: false
+    t.string "period_start_date", null: false
+    t.string "reference", null: false
+    t.integer "required_housing", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organisation_id"], name: "index_timetables_on_organisation_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -38,5 +71,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_02_151528) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "timetable_events", "timetables"
+  add_foreign_key "timetables", "organisations"
   add_foreign_key "users", "organisations"
 end
