@@ -20,5 +20,5 @@ class TimetableEvent < ApplicationRecord
 
   validates :plan_event, presence: true, inclusion: {in: TIMETABLE_EVENTS}
 
-  validates :plan_event, :reference, :event_date, :entry_date, presence: true
+  validates :plan_event, :reference, :entry_date, presence: true
 end
