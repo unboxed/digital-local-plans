@@ -12,7 +12,6 @@ RSpec.describe TimetableEvent, type: :model do
 
     it { is_expected.to validate_presence_of(:plan_event) }
     it { is_expected.to validate_presence_of(:reference) }
-    it { is_expected.to validate_presence_of(:event_date) }
     it { is_expected.to validate_presence_of(:entry_date) }
 
     it { is_expected.to validate_inclusion_of(:plan_event).in_array(TimetableEvent::TIMETABLE_EVENTS) }

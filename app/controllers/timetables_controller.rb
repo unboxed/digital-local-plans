@@ -2,11 +2,13 @@
 
 class TimetablesController < ApplicationController
   def index
-    latest_timetable = current_user.organisation.timetables.order(created_at: :desc).first
+    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first
+                    # TODO: || Timetables::CreateService.call(organisation: current_user.organisation)
 
-    if latest_timetable
-      redirect_to timetable_path(latest_timetable)
+    if timetable
+      redirect_to timetable_path(timetable)
     else
+      # Fallback until CreateService is ready
       redirect_to new_timetable_path
     end
   end
