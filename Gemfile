@@ -44,6 +44,8 @@ group :development, :test do
   gem "brakeman", require: false
 
   gem "rspec-rails", "~> 8.0.0"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers"
 
   gem "standard", "~> 1.56", require: false
   gem "standard-custom", require: false
@@ -57,3 +59,5 @@ group :development do
 end
 
 gem "dlp_admin", path: "engines/dlp_admin"
+
+gem "devise", "~> 5.0"
