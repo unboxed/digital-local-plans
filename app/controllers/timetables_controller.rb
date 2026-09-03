@@ -2,6 +2,13 @@
 
 class TimetablesController < ApplicationController
   def index
+    latest_timetable = current_user.organisation.timetables.order(created_at: :desc).first
+
+    if latest_timetable
+      redirect_to timetable_path(latest_timetable)
+    else
+      redirect_to new_timetable_path
+    end
   end
 
   def show
