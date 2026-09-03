@@ -13,9 +13,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "timelines#index"
+  root "timetables#index"
 
-  get "timelines/index"
+  resources :timetables
 
   mount DlpAdmin::Engine, at: "/admin", as: :dlp_admin
 end

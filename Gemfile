@@ -46,6 +46,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0.0"
   gem "factory_bot_rails"
   gem "shoulda-matchers"
+  gem "faker"
 
   gem "standard", "~> 1.56", require: false
   gem "standard-custom", require: false
