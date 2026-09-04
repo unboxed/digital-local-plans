@@ -1,0 +1,31 @@
+<%= content_for :page_title, 'Add or change plan milestones' %>
+<%= content_for :before_content, govuk_back_link_to(home_path) %>
+
+<h1 class= "govuk-heading-m">Add or change plan milestones</h1>
+
+<%= govuk_table do |table| %>
+  <% table.with_head do |head| %>
+    <% head.with_row do |row| %>
+      <% row.with_cell(text: 'Milestone') %>
+      <% row.with_cell(text: 'Date') %>
+      <% row.with_cell(text: 'Time period') %>
+      <% row.with_cell(text: 'Action') %>
+    <% end %>
+  <% end %>
+
+  <% table.with_body do |body| %>
+    <% body.with_row do |row| %>
+      <% row.with_cell(text: 'First milestone') %>
+      <% row.with_cell(text: '1 January 2027') %>
+      <% row.with_cell(text: '3 months') %>
+      <% row.with_cell(text: 'Change') %>
+    <% end %>
+
+    <% body.with_row do |row| %>
+      <% row.with_cell(text: 'Second milestone') %>
+      <% row.with_cell(text: '1 April 2027') %>
+      <% row.with_cell(text: '6 months') %>
+      <% row.with_cell(text: 'Change') %>
+    <% end %>
+  <% end %>
+<% end %>

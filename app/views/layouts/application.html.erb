@@ -43,17 +43,13 @@
     end %>
 
     <div class="govuk-width-container">
+      <%= yield(:before_content) %>
       <p class="notice govuk-body"><%= notice %></p>
       <p class="alert govuk-body"><%= alert %></p>
 
       <main class="govuk-main-wrapper" id="main-content">
-        <% if content_for?(:page_title) %>
-          <h1 class="govuk-heading-xl"><%= yield :page_title %></h1>
-        <% end %>
         <%= yield %>
       </main>
     </div>
-
-    <%= govuk_footer(copyright_text: "", meta_licence: "") %>
   </body>
 </html>
