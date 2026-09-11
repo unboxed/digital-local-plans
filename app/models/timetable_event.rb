@@ -3,7 +3,6 @@
 class TimetableEvent < ApplicationRecord
   belongs_to :timetable
 
-  # Standard baseline event keys expected for every timetable
   REQUIRED_TIMETABLE_EVENTS = %w[
     public-notice-intention-commence
     scoping-consultation-start

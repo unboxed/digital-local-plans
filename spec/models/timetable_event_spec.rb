@@ -8,21 +8,42 @@ RSpec.describe TimetableEvent, type: :model do
   end
 
   describe "validations" do
-    subject { build(:timetable_event) }
+    it { is_expected.to validate_presence_of(:status) }
 
-    it { is_expected.to validate_presence_of(:plan_event) }
-    it { is_expected.to validate_presence_of(:reference) }
-    it { is_expected.to validate_presence_of(:entry_date) }
+    context "when in draft state" do
+      subject { build(:timetable_event, status: :draft) }
 
-    it { is_expected.to validate_inclusion_of(:plan_event).in_array(TimetableEvent::TIMETABLE_EVENTS) }
+      it { is_expected.to validate_presence_of(:plan_event) }
+
+      it { is_expected.not_to validate_presence_of(:reference) }
+      it { is_expected.not_to validate_presence_of(:entry_date) }
+      it { is_expected.not_to validate_presence_of(:plan) }
+    end
+
+    context "when in published state" do
+      subject { build(:timetable_event, status: :published) }
+
+      it { is_expected.to validate_presence_of(:plan_event) }
+      it { is_expected.to validate_presence_of(:reference) }
+      it { is_expected.to validate_presence_of(:entry_date) }
+      it { is_expected.to validate_presence_of(:plan) }
+    end
+  end
+
+  describe "enums" do
+    it {
+      is_expected.to define_enum_for(:status)
+        .with_values(draft: "draft", published: "published")
+        .backed_by_column_of_type(:string)
+    }
   end
 
   describe "constants" do
-    it "freezes the TIMETABLE_EVENTS array" do
-      expect(TimetableEvent::TIMETABLE_EVENTS).to be_frozen
+    it "freezes the REQUIRED_TIMETABLE_EVENTS array" do
+      expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS).to be_frozen
     end
 
-    it "contains all expected timetable events" do
+    it "contains all expected baseline timetable events" do
       expected_events = %w[
         public-notice-intention-commence
         scoping-consultation-start
@@ -38,7 +59,7 @@ RSpec.describe TimetableEvent, type: :model do
         adopted
       ]
 
-      expect(TimetableEvent::TIMETABLE_EVENTS).to match_array(expected_events)
+      expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS).to match_array(expected_events)
     end
   end
 end
