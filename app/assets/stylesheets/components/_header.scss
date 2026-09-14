@@ -72,7 +72,9 @@
       a.govuk-header__link:focus {
         color: #0b0c0c !important;
         background-color: #ffdd00 !important;
-        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c !important;
+        box-shadow:
+          0 -2px #ffdd00,
+          0 4px #0b0c0c !important;
         outline: none;
       }
     }
