@@ -10,4 +10,13 @@
 );
 
 @use "fonts";
-@import "components/header";
+@use "components/header";
+@use "components/sidebar";
+
+.govuk-width-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: govuk-spacing(3);
+  padding-right: govuk-spacing(3);
+}
