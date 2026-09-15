@@ -6,7 +6,7 @@ RSpec.describe Timetables::InitializeTimetableWithEvents, type: :service do
   let(:organisation) { create(:organisation) }
 
   describe ".call" do
-    subject(:service_call) { described_class.call(organisation: organisation) }
+    subject(:service_call) { described_class.new(organisation: organisation).call }
 
     it "initializes an empty draft timetable linked to the organisation" do
       expect { service_call }.to change(Timetable, :count).by(1)

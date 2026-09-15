@@ -2,10 +2,6 @@
 
 module Timetables
   class InitializeTimetableWithEvents
-    def self.call(organisation:)
-      new(organisation: organisation).call
-    end
-
     def initialize(organisation:)
       @organisation = organisation
     end
