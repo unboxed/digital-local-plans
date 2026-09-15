@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
 class TimetablesController < ApplicationController
-  def index
-    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first
-    # TODO: || Timetables::CreateService.call(organisation: current_user.organisation)
+  before_action :set_timetable, only: %i[show edit update destroy]
 
-    if timetable
-      redirect_to timetable_path(timetable)
-    else
-      # Fallback until CreateService is ready
-      redirect_to new_timetable_path
-    end
+  def index
+    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first ||
+      Timetables::InitializeTimetableWithEvents.new(organisation: current_user.organisation).call
+
+    redirect_to timetable_path(timetable)
   end
 
   def show
@@ -34,8 +31,6 @@ class TimetablesController < ApplicationController
   private
 
   def set_timetable
-  end
-
-  def timetable_params
+    @timetable = current_user.organisation.timetables.find(params[:id])
   end
 end
