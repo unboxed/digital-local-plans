@@ -3,7 +3,7 @@
 class TimetableEvent < ApplicationRecord
   belongs_to :timetable
 
-  TIMETABLE_EVENTS = %w[
+  REQUIRED_TIMETABLE_EVENTS = %w[
     public-notice-intention-commence
     scoping-consultation-start
     scoping-consultation-end
@@ -18,7 +18,15 @@ class TimetableEvent < ApplicationRecord
     adopted
   ].freeze
 
-  validates :plan_event, presence: true, inclusion: {in: TIMETABLE_EVENTS}
+  enum :status, {
+    draft: "draft",
+    published: "published"
+  }, default: "draft"
 
-  validates :plan_event, :reference, :event_date, :entry_date, presence: true
+  validates :status, presence: true
+  validates :plan_event, presence: true
+
+  with_options unless: :draft? do
+    validates :reference, :entry_date, :plan, presence: true
+  end
 end

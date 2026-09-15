@@ -2,6 +2,15 @@
 
 class TimetablesController < ApplicationController
   def index
+    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first
+    # TODO: || Timetables::CreateService.call(organisation: current_user.organisation)
+
+    if timetable
+      redirect_to timetable_path(timetable)
+    else
+      # Fallback until CreateService is ready
+      redirect_to new_timetable_path
+    end
   end
 
   def show
