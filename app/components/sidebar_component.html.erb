@@ -1,0 +1,20 @@
+<nav aria-label="Application tasks" class="bops-sidebar">
+  <h3 class="govuk-heading-s bops-sidebar__heading">Make your plan</h3>
+  <ul class="govuk-list govuk-list--spaced bops-sidebar__list">
+    <li class="bops-sidebar__task <%= 'bops-sidebar__task--active' if active_link?('/timetables') %>">
+      <%= govuk_link_to 'Create and publish timetable', home_path, ('aria-current' if active_link?('/timetables')) => 'page' %>
+    </li>
+    <li class="bops-sidebar__task <%= 'bops-sidebar__task--active' if active_link?('/project-initiation') %>">
+      <%= govuk_link_to 'Project initiation documentation', home_path, ('aria-current' if active_link?('/project_initiation')) => 'page' %>
+    </li>
+    <li class="bops-sidebar__task <%= 'bops-sidebar__task--active' if active_link?('/scoping-activities') %>">
+      <%= govuk_link_to 'Scoping activities', home_path, ('aria-current' if active_link?('/scoping-activities')) => 'page' %>
+    </li>
+    <li class="bops-sidebar__task <%= 'bops-sidebar__task--active' if active_link?('/scoping-consultation') %>">
+      <%= govuk_link_to 'Scoping consultation', home_path, ('aria-current' if active_link?('/scoping-consultation')) => 'page' %>
+    </li>
+    <li class="bops-sidebar__task <%= 'bops-sidebar__task--active' if active_link?('/publish-notice') %>">
+      <%= govuk_link_to 'Publish notice of plan-making', home_path, ('aria-current' if active_link?('/publish-notice')) => 'page' %>
+    </li>
+  </ul>
+</nav>

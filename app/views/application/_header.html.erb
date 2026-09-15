@@ -1,0 +1,48 @@
+<header class="govuk-header" role="banner" data-module="govuk-header">
+  <div class="govuk-header__container govuk-width-container">
+    <%= link_to(
+          home_path,
+          class: "govuk-header__link govuk-header__link--homepage"
+        ) do %>
+      <span class="govuk-header__service-name">
+        <%= current_user.organisation.name || 'City of London Corporation' %>
+      </span>
+      <span class="govuk-header__product-name">
+        Local plan-making system
+      </span>
+    <% end %>
+
+    <div class="header-session-info">
+      <% if current_user.present? %>
+        <div class="govuk-header__navigation-item">
+          <strong><%= current_user.first_name %></strong>
+        </div>
+
+        <div class="govuk-header__navigation-item">
+          <%= link_to(
+                'Log out',
+                main_app.destroy_user_session_path,
+                data: { turbo_method: :delete },
+                class: "govuk-header__link"
+              ) %>
+        </div>
+      <% else %>
+        <div class="govuk-header__navigation-item">
+          <%= link_to(
+                'Sign in',
+                main_app.new_user_session_path,
+                class: "govuk-header__link"
+              ) %>
+        </div>
+
+        <div class="govuk-header__navigation-item">
+          <%= link_to(
+                'Sign up',
+                main_app.new_user_registration_path,
+                class: "govuk-header__link"
+              ) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</header>
