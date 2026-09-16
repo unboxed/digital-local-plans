@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   get "home", to: "home#index"
 
-  resources :timetables
+  resources :timetables, only: %i[index show]
 
   mount DlpAdmin::Engine, at: "/admin", as: :dlp_admin
 end
