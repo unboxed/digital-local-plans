@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_11_142216) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_16_132028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,8 +49,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_142216) do
     t.string "name"
     t.text "notes"
     t.bigint "organisation_id", null: false
-    t.string "period_end_date"
-    t.string "period_start_date"
+    t.date "period_end_date"
+    t.date "period_start_date"
     t.string "reference"
     t.integer "required_housing"
     t.string "status", default: "draft", null: false
