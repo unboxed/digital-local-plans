@@ -4,7 +4,7 @@ class TimetablesController < ApplicationController
   before_action :set_timetable, only: %i[show]
 
   def index
-    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first ||
+    timetable = current_organisation.current_timetable ||
       Timetables::InitializeTimetableWithEvents.new(organisation: current_user.organisation).call
 
     redirect_to timetable_path(timetable)

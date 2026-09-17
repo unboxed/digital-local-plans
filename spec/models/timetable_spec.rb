@@ -51,4 +51,22 @@ RSpec.describe Timetable, type: :model do
         .backed_by_column_of_type(:string)
     }
   end
+
+  describe ".upcoming" do
+    let(:organisation) { create(:organisation) }
+
+    let!(:past_timetable) { create(:timetable, organisation: organisation, period_end_date: 2.years.ago) }
+    let!(:near_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 5.years.from_now) }
+    let!(:distant_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 10.years.from_now) }
+
+    subject(:upcoming_timetables) { described_class.upcoming }
+
+    it "returns timetables with a period_end_date in the future ordered by period_end_date" do
+      expect(upcoming_timetables).to eq([near_future_timetable, distant_future_timetable])
+    end
+
+    it "excludes past timetables" do
+      expect(upcoming_timetables).not_to include(past_timetable)
+    end
+  end
 end

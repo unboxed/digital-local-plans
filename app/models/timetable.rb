@@ -17,4 +17,6 @@ class Timetable < ApplicationRecord
       :document_url, :entry_date, :required_housing, :reference,
       presence: true
   end
+
+  scope :upcoming, -> { where("period_end_date > ?", Date.current).order(:period_end_date) }
 end
