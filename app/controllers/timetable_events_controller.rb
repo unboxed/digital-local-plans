@@ -5,7 +5,7 @@ class TimetableEventsController < ApplicationController
   before_action :set_event_name, only: %i[edit update]
 
   STATUSES = {
-    'draft' => { text: 'In progress', colour: 'green' }
+    "draft" => {text: "In progress", colour: "green"}
   }.freeze
 
   def edit

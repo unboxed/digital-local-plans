@@ -4,7 +4,7 @@ class TimetablesController < ApplicationController
   before_action :set_timetable, only: %i[show]
 
   STATUSES = {
-    'draft' => { text: 'In progress', colour: 'blue' }
+    "draft" => {text: "In progress", colour: "blue"}
   }.freeze
 
   def index
