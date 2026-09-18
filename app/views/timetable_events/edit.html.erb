@@ -1,14 +1,29 @@
 <%= content_for :page_title, "Add details for #{@event_name}" %>
 <%= content_for :before_content, govuk_back_link_to(timetables_path(@timetable_event.timetable)) %>
 
-<p class="govuk-heading-l"><%= @event_name %></p>
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">Add or change plan milestones</h1>
+    <h2 class="govuk-heading-m"><%= @event_name %></h2>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
 
-      <%= render 'form', f: f %>
+      <div class="app-container-outline">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            <%= render 'form', f: f %>
+          </div>
+        </div>
+      </div>
+
+      <div class="govuk-!-margin-top-6">
+        <%= f.govuk_submit 'Save' %>
+      </div>
     <% end %>
+
   </div>
 </div>
