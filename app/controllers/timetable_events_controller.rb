@@ -4,8 +4,13 @@ class TimetableEventsController < ApplicationController
   before_action :set_timetable_event
   before_action :set_event_name, only: %i[edit update]
 
+  STATUSES = {
+    'draft' => { text: 'In progress', colour: 'green' }
+  }.freeze
+
   def edit
     @event_form = EditTimetableEventForm.build_from_event(@timetable_event)
+    @status = status
   end
 
   def update
@@ -15,11 +20,16 @@ class TimetableEventsController < ApplicationController
       redirect_to timetables_path(current_organisation.current_timetable)
       flash[:success] = "#{@event_name} updated"
     else
+      @status = status
       render :edit, status: :unprocessable_content
     end
   end
 
   private
+
+  def status
+    STATUSES.fetch(@timetable_event.status)
+  end
 
   def set_timetable_event
     @timetable_event = current_organisation.current_timetable.timetable_events.find(params[:id])
