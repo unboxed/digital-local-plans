@@ -18,4 +18,8 @@ module ViewHelper
       classes:
     )
   end
+
+  def current_organisation
+    current_user.organisation
+  end
 end

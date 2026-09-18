@@ -6,4 +6,8 @@ class Organisation < ApplicationRecord
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: {case_sensitive: false}
+
+  def current_timetable
+    timetables.upcoming.first
+  end
 end

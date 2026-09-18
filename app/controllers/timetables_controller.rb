@@ -1,31 +1,16 @@
 # frozen_string_literal: true
 
 class TimetablesController < ApplicationController
-  before_action :set_timetable, only: %i[show edit update destroy]
+  before_action :set_timetable, only: %i[show]
 
   def index
-    timetable = current_user.organisation.timetables.draft.order(created_at: :desc).first ||
+    timetable = current_organisation.current_timetable ||
       Timetables::InitializeTimetableWithEvents.new(organisation: current_user.organisation).call
 
     redirect_to timetable_path(timetable)
   end
 
   def show
-  end
-
-  def new
-  end
-
-  def edit
-  end
-
-  def create
-  end
-
-  def update
-  end
-
-  def destroy
   end
 
   private

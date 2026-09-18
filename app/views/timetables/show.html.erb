@@ -15,13 +15,13 @@
   <% table.with_body do |body| %>
     <% @timetable.timetable_events.each do |event| %>
       <% body.with_row do |row| %>
-        <%= row.with_cell(text: event.plan_event.to_s.humanize) %>
+        <%= row.with_cell(text: event.plan_event.tr('-', ' ').humanize) %>
         <%= row.with_cell(text: event.event_date.present? ? event.event_date.to_fs(:govuk) : 'Not yet completed') %>
         <%= row.with_cell do %>
           <% if event.event_date.present? %>
-            <%= govuk_link_to 'Change', home_path %>
+            <%= govuk_link_to 'Change', edit_timetable_event_path(event) %>
           <% else %>
-            <%= govuk_link_to 'Add date', home_path %>
+            <%= govuk_link_to 'Add date', edit_timetable_event_path(event) %>
           <% end %>
         <% end %>
       <% end %>
