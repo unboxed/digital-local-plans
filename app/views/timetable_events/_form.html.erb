@@ -1,7 +1,11 @@
 <%= f.govuk_error_summary %>
 
+<%= f.govuk_text_field :reference, label: { text: 'Reference', size: 'm' }, hint: { text: 'Give each event a unique reference' } %>
+
 <%= f.govuk_date_field :event_date, legend: { text: 'Planned date', size: 'm' } %>
 <%= f.govuk_date_field :actual_date, legend: { text: 'Actual date', size: 'm' }, hint: { text: 'If applicable' } %>
 <%= f.govuk_date_field :entry_date, legend: { text: 'Entry date', size: 'm' } %>
+
+<%= f.govuk_text_area :notes, label: { text: 'Notes', size: 'm' }, hint: { text: 'Any additional notes or commentary (optional)' } %>
 
 <%= f.govuk_submit 'Save' %>

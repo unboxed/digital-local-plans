@@ -27,6 +27,8 @@ class TimetableEventsController < ApplicationController
   def timetable_event_params
     permitted = params.expect(
       edit_timetable_event_form: [
+        :reference,
+        :notes,
         :"event_date(1i)", :"event_date(2i)", :"event_date(3i)",
         :"actual_date(1i)", :"actual_date(2i)", :"actual_date(3i)",
         :"entry_date(1i)", :"entry_date(2i)", :"entry_date(3i)"
