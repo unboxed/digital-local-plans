@@ -4,8 +4,8 @@ class EditTimetableEventForm
   include ActiveModel::Model
 
   attr_accessor :event_date_day, :event_date_month, :event_date_year,
-                :actual_date_day, :actual_date_month, :actual_date_year,
-                :entry_date_day, :entry_date_month, :entry_date_year
+    :actual_date_day, :actual_date_month, :actual_date_year,
+    :entry_date_day, :entry_date_month, :entry_date_year
 
   def self.build_from_event(event)
     new(
@@ -25,9 +25,9 @@ class EditTimetableEventForm
     return false if invalid?
 
     event.update!(
-      event_date: event_date,
-      actual_date: actual_date,
-      entry_date: entry_date
+      event_date:,
+      actual_date:,
+      entry_date:,
     )
   end
 
@@ -43,7 +43,7 @@ class EditTimetableEventForm
     parse_date(entry_date_year, entry_date_month, entry_date_day)
   end
 
-private
+  private
 
   def parse_date(year, month, day)
     return nil if year.blank? || month.blank? || day.blank?

@@ -5,7 +5,7 @@ class TimetableEventsController < ApplicationController
 
   def edit
     @event_name = @timetable_event.plan_event.tr("-", " ").humanize
-    @event_form = EditTimetableEventForm.new
+    @event_form = EditTimetableEventForm.build_from_event(@timetable_event)
   end
 
   def update
@@ -18,13 +18,13 @@ class TimetableEventsController < ApplicationController
     end
   end
 
-private
+  private
 
   def set_timetable_event
     @timetable_event = current_organisation.current_timetable.timetable_events.find(params[:id])
   end
 
-def timetable_event_params
+  def timetable_event_params
     permitted = params.expect(
       edit_timetable_event_form: [
         :"event_date(1i)", :"event_date(2i)", :"event_date(3i)",
