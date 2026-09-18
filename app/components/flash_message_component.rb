@@ -1,0 +1,45 @@
+class FlashMessageComponent < ApplicationComponent
+  ALLOWED_PRIMARY_KEYS = %i[info warning success error].freeze
+
+  def initialize(flash:)
+    @flash = flash.to_hash.symbolize_keys!
+  end
+
+  def message_key
+    flash.keys.detect { |key| ALLOWED_PRIMARY_KEYS.include?(key) }
+  end
+
+  def title
+    I18n.t(message_key, scope: :notification_banner)
+  end
+
+  def classes
+    "govuk-notification-banner--#{message_key}"
+  end
+
+  def role
+    %i[warning success].include?(message_key) ? 'alert' : 'region'
+  end
+
+  def heading
+    messages.is_a?(Array) ? messages[0].html_safe : messages.html_safe
+  end
+
+  def body
+    if messages.is_a?(Array) && messages.count >= 2
+      tag.p(messages[1].html_safe, class: 'govuk-body')
+    end
+  end
+
+  def render?
+    !flash.empty? && message_key
+  end
+
+private
+
+  def messages
+    flash[message_key]
+  end
+
+  attr_reader :flash
+end

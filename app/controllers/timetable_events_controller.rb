@@ -13,6 +13,7 @@ class TimetableEventsController < ApplicationController
 
     if @event_form.save(@timetable_event)
       redirect_to timetables_path(current_organisation.current_timetable)
+      flash[:success] = "#{@event_name} updated"
     else
       render :edit, status: :unprocessable_content
     end

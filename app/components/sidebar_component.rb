@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class SidebarComponent < ViewComponent::Base
-  delegate :govuk_link_to, to: :helpers
-
+class SidebarComponent < ApplicationComponent
   def initialize(current_path: nil)
     @current_path = current_path
   end
