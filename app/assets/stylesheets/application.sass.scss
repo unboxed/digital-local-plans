@@ -21,7 +21,12 @@
   padding-right: govuk-spacing(3);
 }
 
+.app-table__header--bold-black {
+  border-bottom: 3px solid #0b0c0c;
+}
 .app-container-outline {
   border: 1px solid govuk-colour("mid-grey");
   padding: govuk-spacing(4);
 }
+
+

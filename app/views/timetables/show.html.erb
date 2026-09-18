@@ -7,12 +7,12 @@
     <h1 class="govuk-heading-m">Create timetable</h1>
 
     <%= govuk_table do |table| %>
-    <% table.with_head do |head| %>
-        <% head.with_row(classes: 'app-table__head-row--bold-border') do |row| %>
-          <%= row.with_cell(text: 'Milestone') %>
-          <%= row.with_cell(text: 'Date') %>
-          <%= row.with_cell(text: 'Time Period') %>
-          <%= row.with_cell(text: 'Action') %>
+      <% table.with_head do |head| %>
+        <% head.with_row do |row| %>
+          <%= row.with_cell(text: 'Milestone', classes: 'app-table__header--bold-black') %>
+          <%= row.with_cell(text: 'Date', classes: 'app-table__header--bold-black') %>
+          <%= row.with_cell(text: 'Time Period', classes: 'app-table__header--bold-black') %>
+          <%= row.with_cell(text: 'Action', classes: 'app-table__header--bold-black') %>
         <% end %>
       <% end %>
 

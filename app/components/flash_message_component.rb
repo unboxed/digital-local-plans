@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FlashMessageComponent < ApplicationComponent
   ALLOWED_PRIMARY_KEYS = %i[info warning success error].freeze
 
@@ -18,7 +20,7 @@ class FlashMessageComponent < ApplicationComponent
   end
 
   def role
-    %i[warning success].include?(message_key) ? 'alert' : 'region'
+    %i[warning success].include?(message_key) ? "alert" : "region"
   end
 
   def heading
@@ -27,7 +29,7 @@ class FlashMessageComponent < ApplicationComponent
 
   def body
     if messages.is_a?(Array) && messages.count >= 2
-      tag.p(messages[1].html_safe, class: 'govuk-body')
+      tag.p(messages[1].html_safe, class: "govuk-body")
     end
   end
 
@@ -35,7 +37,7 @@ class FlashMessageComponent < ApplicationComponent
     !flash.empty? && message_key
   end
 
-private
+  private
 
   def messages
     flash[message_key]
