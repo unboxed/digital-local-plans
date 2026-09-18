@@ -39,10 +39,6 @@ class TimetableEventsController < ApplicationController
       ]
     )
 
-    permitted.transform_keys do |key|
-      key = date_field_to_attribute(key, "event_date")
-      key = date_field_to_attribute(key, "actual_date")
-      date_field_to_attribute(key, "entry_date")
-    end
+    permitted.transform_keys { |key| date_field_to_attribute(key) }
   end
 end
