@@ -2,9 +2,9 @@
 
 class TimetableEventsController < ApplicationController
   before_action :set_timetable_event
+  before_action :set_event_name, only: %i[edit update]
 
   def edit
-    @event_name = @timetable_event.plan_event.tr("-", " ").humanize
     @event_form = EditTimetableEventForm.build_from_event(@timetable_event)
   end
 
@@ -14,7 +14,7 @@ class TimetableEventsController < ApplicationController
     if @event_form.save(@timetable_event)
       redirect_to timetables_path(current_organisation.current_timetable)
     else
-      render :edit
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -22,6 +22,10 @@ class TimetableEventsController < ApplicationController
 
   def set_timetable_event
     @timetable_event = current_organisation.current_timetable.timetable_events.find(params[:id])
+  end
+
+  def set_event_name
+    @event_name = @timetable_event.plan_event.tr("-", " ").humanize
   end
 
   def timetable_event_params

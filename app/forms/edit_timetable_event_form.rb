@@ -8,6 +8,11 @@ class EditTimetableEventForm
     :entry_date_day, :entry_date_month, :entry_date_year,
     :reference, :notes
 
+  validates :reference, presence: true
+
+  validate :validate_event_date
+  validate :validate_future_and_max_dates
+
   def self.build_from_event(event)
     new(
       reference: event.reference,
@@ -56,5 +61,28 @@ class EditTimetableEventForm
     Date.new(year.to_i, month.to_i, day.to_i)
   rescue ArgumentError
     nil
+  end
+
+  private
+
+  def validate_event_date
+    if event_date_day.blank? || event_date_month.blank? || event_date_year.blank?
+      errors.add(:event_date, :blank)
+    elsif parse_date(event_date_year, event_date_month, event_date_day).nil?
+      errors.add(:event_date, :invalid)
+    end
+  end
+
+  def validate_future_and_max_dates
+    date = event_date
+    return unless date.is_a?(Date)
+
+    if date < Date.current
+      errors.add(:event_date, :not_in_future)
+    end
+
+    if date.year > 2050
+      errors.add(:event_date, :too_far_in_future)
+    end
   end
 end
