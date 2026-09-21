@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Timetables
-  class InitializeTimetableWithEvents
+  class InitializeTimetableWithEvents < ApplicationService
     def initialize(organisation:)
       @organisation = organisation
     end
