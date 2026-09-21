@@ -39,7 +39,7 @@ module Timetables
     private
 
     def events
-      @events ||= @timetable.timetable_events
+      @events ||= @timetable.timetable_events.order(:id)
     end
   end
 end

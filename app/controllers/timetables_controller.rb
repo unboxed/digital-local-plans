@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TimetablesController < ApplicationController
-  before_action :set_timetable, only: %i[show]
+  before_action :set_timetable, only: %i[show export]
 
   STATUSES = {
     "draft" => {text: "In progress", colour: "blue"}
@@ -16,6 +16,14 @@ class TimetablesController < ApplicationController
 
   def show
     @status = status
+  end
+
+  def export
+    csv_data = Timetables::BuildCsv.call(@timetable)
+
+    send_data csv_data,
+      filename: "timetable-#{@timetable.reference}-#{Date.current.iso8601}.csv",
+      type: "text/csv"
   end
 
   private

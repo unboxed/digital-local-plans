@@ -17,7 +17,12 @@ Rails.application.routes.draw do
 
   get "home", to: "home#index"
 
-  resources :timetables, only: %i[index show]
+  resources :timetables, only: %i[index show] do
+    member do
+      get :export
+    end
+  end
+  
   resources :timetable_events, only: %i[edit update]
 
   mount DlpAdmin::Engine, at: "/admin", as: :dlp_admin
