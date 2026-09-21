@@ -22,7 +22,7 @@
       <% table.with_body do |body| %>
         <% @timetable.timetable_events.order(:id).each_with_index do |event, i| %>
           <% body.with_row do |row| %>
-            <%= row.with_cell(text: "#{i+1}. #{event.plan_event.tr('-', ' ').humanize}", classes: "govuk-!-font-weight-bold") %>
+            <%= row.with_cell(text: "#{i+1}. #{event.milestone_name}", classes: "govuk-!-font-weight-bold") %>
             <%= row.with_cell(text: event.event_date.present? ? event.event_date.to_fs(:govuk) : "Not yet completed", classes: "govuk-hint") %>
             <%= row.with_cell(text: event.timing_description, classes: "govuk-hint") %>
             <%= row.with_cell do %>

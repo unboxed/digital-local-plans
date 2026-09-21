@@ -1,0 +1,36 @@
+public-notice-intention-commence:
+  name: Publish notice of intention to commence
+  timing_description: Must be published at least 4 months before Gateway 1.
+scoping-consultation-start:
+  name: Start scoping consultation
+  timing_description: Must run for at least 21 days.
+scoping-consultation-end:
+  name: End scoping consultation
+  timing_description: Must be at least 21 days after the scoping consultation start.
+gateway-1-self-assessment:
+  name: "Self-assessment for gateway 1"
+  timing_description: Marks formal commencement of the 30-month timeframe.
+plan-content-evidence-consultation-start:
+  name: Start consultation on proposed local plan
+  timing_description: Must run for at least 6 weeks.
+plan-content-evidence-consultation-end:
+  name: End consultation on proposed local plan
+  timing_description: Must be at least 6 weeks after the consultation start date.
+gateway-2-advice-sought:
+  name: "Gateway 2: advice sought"
+  timing_description: Should take place between the content and proposed plan consultations.
+proposed-plan-consultation-start:
+  name: Consultation on proposed local plan starts
+  timing_description: Must run for at least 8 weeks.
+proposed-plan-consultation-end:
+  name: Consultation on proposed local plan ends
+  timing_description: Must be at least 8 weeks after the proposed plan consultation start date.
+gateway-3-advice-sought:
+  name: "Gateway 3: advice sought"
+  timing_description: Takes place after the proposed plan consultation closes, before submission.
+examination-submitted:
+  name: Plan submitted for examination
+  timing_description: Typically around 24 months after commencement (Gateway 1).
+adopted:
+  name: Plan adopted
+  timing_description: Typically around 5-6 months after examination submission.

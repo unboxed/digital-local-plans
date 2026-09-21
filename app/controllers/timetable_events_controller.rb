@@ -36,7 +36,7 @@ class TimetableEventsController < ApplicationController
   end
 
   def set_event_name
-    @event_name = @timetable_event.plan_event.tr("-", " ").humanize
+    @event_name = @timetable_event.milestone_name
   end
 
   def timetable_event_params

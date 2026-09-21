@@ -9,7 +9,7 @@ FactoryBot.define do
     event_date { Faker::Date.forward(days: 60) }
     notes { Faker::Lorem.sentence }
     plan { "local-plan" }
-    plan_event { TimetableEvent::REQUIRED_TIMETABLE_EVENTS.sample }
+    plan_event { TimetableEvent::REQUIRED_TIMETABLE_EVENTS.keys.sample }
     reference { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
     trait :adopted do
