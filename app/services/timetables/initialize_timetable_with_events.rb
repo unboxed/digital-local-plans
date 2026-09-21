@@ -25,6 +25,7 @@ module Timetables
       TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each do |event_key|
         timetable.timetable_events.create!(
           plan_event: event_key,
+          plan: timetable.reference,
           status: :draft
         )
       end

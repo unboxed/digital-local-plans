@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TimetableEvent < ApplicationRecord
+  before_save :set_entry_date
+
   belongs_to :timetable
 
   REQUIRED_TIMETABLE_EVENTS = %w[
@@ -28,5 +30,9 @@ class TimetableEvent < ApplicationRecord
 
   with_options unless: :draft? do
     validates :reference, :entry_date, :plan, presence: true
+  end
+
+  def set_entry_date
+    self.entry_date = Date.current if (changed - ["entry_date"]).any?
   end
 end
