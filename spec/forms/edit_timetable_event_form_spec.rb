@@ -133,19 +133,48 @@ RSpec.describe EditTimetableEventForm, type: :model do
   end
 
   describe "#save" do
-    let(:event) { instance_double("TimetableEvent") }
+    let(:event) { instance_double(TimetableEvent, plan_event: "scoping-consultation-start", timetable:) }
+    let(:timetable) { instance_double(Timetable, timetable_events:) }
+    let(:timetable_events) { double("timetable_events") }
+
+    before { allow(timetable_events).to receive(:reload) }
 
     context "when the form is valid" do
-      it "updates the event and returns true" do
-        expect(event).to receive(:update!).with(
-          reference: "LP-101",
-          notes: "This is my local plan milestone",
-          event_date: Date.new(2028, 10, 20),
-          actual_date: Date.new(2028, 10, 15),
-          entry_date: Date.new(2028, 10, 10)
-        ).and_return(true)
+      before { allow(event).to receive(:update!) }
 
-        expect(form.save(event)).to be_truthy
+      context "and the timetable is valid with the pending changes" do
+        before { allow(timetable).to receive(:invalid?).and_return(false) }
+
+        it "updates the event and returns true" do
+          expect(event).to receive(:update!).with(
+            reference: "LP-101",
+            notes: "This is my local plan milestone",
+            event_date: Date.new(2028, 10, 20),
+            actual_date: Date.new(2028, 10, 15),
+            entry_date: Date.new(2028, 10, 10)
+          )
+
+          expect(form.save(event)).to be(true)
+        end
+      end
+
+      context "when the pending change creates a relevant gap violation" do
+        let(:timetable_errors) do
+          errors = ActiveModel::Errors.new(timetable)
+          errors.add(:base, "There needs to be at least 21 days between things",
+            from_key: "scoping-consultation-start", to_key: "scoping-consultation-end")
+          errors
+        end
+
+        before do
+          allow(timetable).to receive(:invalid?).and_return(true)
+          allow(timetable).to receive(:errors).and_return(timetable_errors)
+        end
+
+        it "returns false and adds the relevant error to the form" do
+          expect(form.save(event)).to be(false)
+          expect(form.errors[:base]).to include("There needs to be at least 21 days between things")
+        end
       end
     end
 
