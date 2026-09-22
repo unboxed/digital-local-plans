@@ -24,7 +24,12 @@ module Timetables
       actual_gap = calculate_gap_between(from_event, to_event)
       return if actual_gap >= required_gap[:minimum_gap]
 
-      timetable.errors.add :base, "There needs to be at least #{required_gap[:label]} between #{from_event.milestone_name.titleize} to #{to_event.milestone_name.titleize}"
+      timetable.errors.add(
+        :base,
+        "There needs to be at least #{required_gap[:label]} between #{from_event.milestone_name.titleize} and #{to_event.milestone_name.titleize}",
+        from_key: required_gap[:from],
+        to_key: required_gap[:to]
+      )
     end
 
     private

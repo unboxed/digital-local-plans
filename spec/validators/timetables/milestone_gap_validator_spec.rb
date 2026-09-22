@@ -16,7 +16,7 @@ RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
 
       Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap)
 
-      expect(timetable.errors.full_messages).to include("There needs to be at least 21 days between Start Scoping Consultation to End Scoping Consultation")
+      expect(timetable.errors.full_messages).to include("There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation")
     end
 
     it "returns no errors if no shorter gaps than required are found" do

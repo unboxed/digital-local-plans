@@ -9,6 +9,8 @@ class Timetable < ApplicationRecord
     published: "published"
   }, default: "draft"
 
+  validates_with Timetables::MilestoneGapValidator, on: :update
+
   validates :status, presence: true
 
   with_options unless: :draft? do
