@@ -6,7 +6,7 @@ class TimetableEvent < ApplicationRecord
   belongs_to :timetable
 
   REQUIRED_TIMETABLE_EVENTS = YAML.load_file(
-    Rails.root.join("config/timetable_milestones.yml")
+    Rails.root.join("config/required_timetable_events.yml")
   ).freeze
 
   TIMING_DESCRIPTIONS = {
