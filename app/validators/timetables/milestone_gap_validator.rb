@@ -3,20 +3,20 @@
 module Timetables
   class MilestoneGapValidator < ActiveModel::Validator
     REQUIRED_GAPS = [
-      {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days},
-      {from: "public-notice-intention-commence", to: "gateway-1-self-assessment", minimum_gap: 4.months},
-      {from: "plan-content-evidence-consultation-start", to: "plan-content-evidence-consultation-end", minimum_gap: 6.weeks},
-      {from: "proposed-plan-consultation-start", to: "proposed-plan-consultation-end", minimum_gap: 8.weeks},
-      {from: "public-notice-intention-commence", to: "adopted", minimum_gap: 8.weeks}
+      {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"},
+      {from: "public-notice-intention-commence", to: "gateway-1-self-assessment", minimum_gap: 4.months, label: "4 months"},
+      {from: "plan-content-evidence-consultation-start", to: "plan-content-evidence-consultation-end", minimum_gap: 6.weeks, label: "6 weeks"},
+      {from: "proposed-plan-consultation-start", to: "proposed-plan-consultation-end", minimum_gap: 8.weeks, label: "8 weeks"},
+      {from: "public-notice-intention-commence", to: "adopted", minimum_gap: 8.weeks, label: "8 weeks"}
     ].freeze
 
     def validate(timetable)
       REQUIRED_GAPS.each do |required_gap|
-        check_for_short_gaps(timetable, required_gap)
+        check_gaps(timetable, required_gap)
       end
     end
 
-    def check_for_short_gaps(timetable, required_gap)
+    def check_gaps(timetable, required_gap)
       from_event = find_event(timetable, required_gap[:from])
       to_event = find_event(timetable, required_gap[:to])
       return unless from_event.event_date && to_event.event_date
@@ -24,8 +24,7 @@ module Timetables
       actual_gap = calculate_gap_between(from_event, to_event)
       return if actual_gap >= required_gap[:minimum_gap]
 
-      true
-      # to be iterated to add specific errors
+      timetable.errors.add :base, "There needs to be at least #{required_gap[:label]} between #{from_event.milestone_name.titleize} to #{to_event.milestone_name.titleize}"
     end
 
     private
