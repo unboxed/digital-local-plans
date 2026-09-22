@@ -11,10 +11,10 @@ gateway-1-self-assessment:
   name: "Self-assessment for gateway 1"
   timing_description: Marks formal commencement of the 30-month timeframe
 plan-content-evidence-consultation-start:
-  name: Start consultation on proposed local plan
+  name: Start consultation on proposed content and evidence for local plan
   timing_description: Must run for at least 6 weeks
 plan-content-evidence-consultation-end:
-  name: End consultation on proposed local plan
+  name: End consultation on proposed content and evidence for local plan
   timing_description: Must be at least 6 weeks after the consultation start date
 gateway-2-advice-sought:
   name: "Gateway 2: advice sought"
