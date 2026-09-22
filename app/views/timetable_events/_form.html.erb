@@ -1,9 +1,9 @@
 <%= f.govuk_text_field :reference, label: { text: 'Reference', size: 'm' }, hint: { text: 'Give each event a unique reference' } %>
 
-<%= f.govuk_date_field :event_date, legend: { text: 'Planned date', size: 'm' } %>
-<%= f.govuk_date_field :actual_date, legend: { text: 'Actual date', size: 'm' }, hint: { text: 'If applicable' } %>
-<%= f.govuk_date_field :entry_date, legend: { text: 'Entry date', size: 'm' } %>
+<%= f.govuk_text_field :plan_reference, label: { text: 'Plan reference', size: 'm' }, hint: { text: 'The reference of the plan this event belongs to'}, value: "#{timetable_event.timetable.reference}", disabled: true %>
+
+<%= f.govuk_date_field :event_date, legend: { text: 'Planned date', size: 'm' }, hint: { text: 'When this event is expected to happen'} %>
+<%= f.govuk_date_field :actual_date, legend: { text: 'Actual date (if applicable)', size: 'm' }, hint: { text: 'When this event actually happened. Leave blank for future events.' } %>
+<%= f.govuk_date_field :entry_date, legend: { text: 'Entry date', size: 'm' }, hint: { text: 'The date you created or last modified this record.'} %>
 
 <%= f.govuk_text_area :notes, label: { text: 'Notes', size: 'm' }, hint: { text: 'Any additional notes or commentary (optional)' } %>
-
-<%= f.govuk_submit 'Save' %>

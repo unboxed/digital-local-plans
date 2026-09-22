@@ -3,6 +3,10 @@
 class TimetablesController < ApplicationController
   before_action :set_timetable, only: %i[show]
 
+  STATUSES = {
+    "draft" => {text: "In progress", colour: "blue"}
+  }.freeze
+
   def index
     timetable = current_organisation.current_timetable ||
       Timetables::InitializeTimetableWithEvents.new(organisation: current_user.organisation).call
@@ -11,11 +15,16 @@ class TimetablesController < ApplicationController
   end
 
   def show
+    @status = status
   end
 
   private
 
+  def status
+    STATUSES.fetch(@timetable.status)
+  end
+
   def set_timetable
-    @timetable = current_user.organisation.timetables.find(params[:id])
+    @timetable = current_organisation.timetables.find(params[:id])
   end
 end

@@ -20,3 +20,19 @@
   padding-left: govuk-spacing(3);
   padding-right: govuk-spacing(3);
 }
+
+.app-page-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: govuk-spacing(3);
+  margin-bottom: govuk-spacing(3);
+}
+
+.app-table__header--bold-black {
+  border-bottom: 3px solid #0b0c0c;
+}
+
+.app-container-outline {
+  border: 1px solid govuk-colour("mid-grey");
+  padding: govuk-spacing(4);
+}

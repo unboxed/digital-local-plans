@@ -1,0 +1,7 @@
+en:
+  notification_banner:
+    info: Information
+    warning: Warning
+    error: There is a problem
+    success: Success
+    important: Important
