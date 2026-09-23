@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TimetableEvent < ApplicationRecord
-  before_save :set_entry_date
+  before_save :set_entry_date, unless: :new_record?
 
   belongs_to :timetable
 
