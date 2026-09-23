@@ -6,7 +6,7 @@ module Timetables
       {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"},
       {from: "public-notice-intention-commence", to: "gateway-1-self-assessment", minimum_gap: 4.months, label: "4 months"},
       {from: "plan-content-evidence-consultation-start", to: "plan-content-evidence-consultation-end", minimum_gap: 6.weeks, label: "6 weeks"},
-      {from: "proposed-plan-consultation-start", to: "proposed-plan-consultation-end", minimum_gap: 8.weeks, label: "8 weeks"},
+      {from: "proposed-plan-consultation-start", to: "proposed-plan-consultation-end", minimum_gap: 8.weeks, label: "8 weeks"}
       # TODO: Add ability to validate for maximum_gap between scoping-consultation-start and adoption
     ].freeze
 
@@ -26,9 +26,12 @@ module Timetables
 
       timetable.errors.add(
         :base,
-        "There needs to be at least #{required_gap[:label]} between #{from_event.milestone_name.titleize} and #{to_event.milestone_name.titleize}",
+        :insufficient_gap,
         from_key: required_gap[:from],
-        to_key: required_gap[:to]
+        to_key: required_gap[:to],
+        gap_label: required_gap[:label],
+        from_name: from_event.milestone_name.titleize,
+        to_name: to_event.milestone_name.titleize
       )
     end
 
