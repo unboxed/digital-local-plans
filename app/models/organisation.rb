@@ -8,6 +8,8 @@ class Organisation < ApplicationRecord
   validates :email, presence: true, uniqueness: {case_sensitive: false}
 
   def current_timetable
-    timetables.upcoming.first
+    timetables.last
+    # timetable.upcoming.first
+    # temporary change until we create initialisation form for timetable data
   end
 end

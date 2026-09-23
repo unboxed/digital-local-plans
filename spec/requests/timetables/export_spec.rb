@@ -12,28 +12,28 @@ RSpec.describe "Timetables::Export", type: :request do
     create_list(:timetable_event, 2, timetable:)
   end
 
-  describe "GET /timetables/:id/export" do
+  describe "GET /timetables/:timetable_id/timetable_exports" do
     it "returns a successful response" do
-      get export_timetable_path(timetable)
+      get timetable_timetable_exports_path(timetable)
 
       expect(response).to have_http_status(:ok)
     end
 
     it "returns CSV content type" do
-      get export_timetable_path(timetable)
+      get timetable_timetable_exports_path(timetable)
 
       expect(response.content_type).to eq("text/csv")
     end
 
     it "sets the expected filename" do
-      get export_timetable_path(timetable)
+      get timetable_timetable_exports_path(timetable)
 
       expect(response.headers["Content-Disposition"])
         .to include("timetable-LP-2050-#{Date.current.iso8601}.csv")
     end
 
     it "returns the generated CSV data" do
-      get export_timetable_path(timetable)
+      get timetable_timetable_exports_path(timetable)
 
       expect(response.body).to eq(Timetables::BuildCsv.call(timetable))
     end

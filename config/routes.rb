@@ -18,9 +18,7 @@ Rails.application.routes.draw do
   get "home", to: "home#index"
 
   resources :timetables, only: %i[index show] do
-    member do
-      get :export
-    end
+    resource :timetable_exports, only: %i[show]
   end
 
   resources :timetable_events, only: %i[edit update]
