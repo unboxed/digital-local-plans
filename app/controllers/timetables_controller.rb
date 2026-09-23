@@ -9,7 +9,7 @@ class TimetablesController < ApplicationController
 
   def index
     timetable = current_organisation.current_timetable ||
-      Timetables::InitializeTimetableWithEvents.new(organisation: current_user.organisation).call
+      Timetables::InitializeTimetableWithEvents.call(organisation: current_user.organisation)
 
     redirect_to timetable_path(timetable)
   end

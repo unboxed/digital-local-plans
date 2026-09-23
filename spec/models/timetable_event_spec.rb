@@ -7,6 +7,27 @@ RSpec.describe TimetableEvent, type: :model do
     it { is_expected.to belong_to(:timetable) }
   end
 
+  describe "callbacks" do
+    describe "#set_entry_date" do
+      it "updates entry_date when another attribute changes" do
+        event = create(:timetable_event, notes: "Initial note")
+
+        travel_to 1.day.from_now do
+          expect { event.update!(notes: "Updated note") }
+            .to change(event, :entry_date).to(Date.current)
+        end
+      end
+
+      it "does not update entry_date when nothing else has changed" do
+        event = create(:timetable_event)
+
+        travel_to 1.day.from_now do
+          expect { event.save! }.not_to change(event, :entry_date)
+        end
+      end
+    end
+  end
+
   describe "validations" do
     it { is_expected.to validate_presence_of(:status) }
 
