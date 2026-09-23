@@ -22,7 +22,7 @@ module Timetables
     private
 
     def build_required_events(timetable)
-      TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each do |event_key|
+      TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each_key do |event_key|
         timetable.timetable_events.create!(
           plan_event: event_key,
           plan: timetable.reference,

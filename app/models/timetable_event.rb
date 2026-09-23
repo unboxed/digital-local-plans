@@ -5,20 +5,9 @@ class TimetableEvent < ApplicationRecord
 
   belongs_to :timetable
 
-  REQUIRED_TIMETABLE_EVENTS = %w[
-    public-notice-intention-commence
-    scoping-consultation-start
-    scoping-consultation-end
-    gateway-1-self-assessment
-    plan-content-evidence-consultation-start
-    plan-content-evidence-consultation-end
-    gateway-2-advice-sought
-    proposed-plan-consultation-start
-    proposed-plan-consultation-end
-    gateway-3-advice-sought
-    examination-submitted
-    adopted
-  ].freeze
+  REQUIRED_TIMETABLE_EVENTS = YAML.load_file(
+    Rails.root.join("config/timetable_milestones.yml")
+  ).freeze
 
   enum :status, {
     draft: "draft",
@@ -30,6 +19,14 @@ class TimetableEvent < ApplicationRecord
 
   with_options unless: :draft? do
     validates :reference, :entry_date, :plan, presence: true
+  end
+
+  def milestone_name
+    REQUIRED_TIMETABLE_EVENTS.dig(plan_event, "name")
+  end
+
+  def timing_description
+    REQUIRED_TIMETABLE_EVENTS.dig(plan_event, "timing_description")
   end
 
   def set_entry_date

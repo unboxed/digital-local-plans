@@ -23,7 +23,7 @@ RSpec.describe Timetables::InitializeTimetableWithEvents, type: :service do
       timetable = Timetable.last
       events = timetable.timetable_events
 
-      expect(events.pluck(:plan_event)).to match_array(TimetableEvent::REQUIRED_TIMETABLE_EVENTS)
+      expect(events.pluck(:plan_event)).to match_array(TimetableEvent::REQUIRED_TIMETABLE_EVENTS.keys)
       expect(events.pluck(:status).uniq).to eq(["draft"])
       expect(events.pluck(:reference).compact).to be_empty
     end

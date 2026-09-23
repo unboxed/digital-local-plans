@@ -60,7 +60,7 @@ RSpec.describe TimetableEvent, type: :model do
   end
 
   describe "constants" do
-    it "freezes the REQUIRED_TIMETABLE_EVENTS array" do
+    it "freezes the REQUIRED_TIMETABLE_EVENTS hash" do
       expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS).to be_frozen
     end
 
@@ -80,7 +80,14 @@ RSpec.describe TimetableEvent, type: :model do
         adopted
       ]
 
-      expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS).to match_array(expected_events)
+      expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS.keys).to match_array(expected_events)
+    end
+
+    it "has a name and timing description for every required event" do
+      TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each_value do |data|
+        expect(data["name"]).to be_present
+        expect(data["timing_description"]).to be_present
+      end
     end
   end
 end
