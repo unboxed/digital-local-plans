@@ -3,50 +3,96 @@
 require "rails_helper"
 
 RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
+  let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) } # TODO: add events to factory
+  let(:required_gap) { {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"} }
+  let(:error_message) { "There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation" }
+
+  describe "#validate" do
+    before { set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3)) }
+
+    it "adds errors by default" do
+      described_class.new.validate(timetable)
+
+      expect(timetable.errors.full_messages).to include(error_message)
+      expect(timetable.warnings).to be_empty
+    end
+
+    it "adds warnings when initialised with warning: true" do
+      described_class.new(warning: true).validate(timetable)
+
+      expect(timetable.errors).to be_empty
+      expect(timetable.warnings.map(&:gap_label)).to eq(["21 days"])
+    end
+  end
+
   describe "#check_gaps" do
-    it "returns true if shorter gaps than required are found" do
-      timetable = Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) # TODO: add events to factory
-      required_gap = {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"}
+    context "when warning is false" do
+      it "adds an error if the gap is shorter than required" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3))
 
-      consultation_start_event = timetable.timetable_events.where(plan_event: "scoping-consultation-start")
-      consultation_end_event = timetable.timetable_events.where(plan_event: "scoping-consultation-end")
+        described_class.new.check_gaps(timetable, required_gap, warning: false)
 
-      consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
-      consultation_end_event.update!(event_date: Date.new(2030, 11, 3))
+        expect(timetable.errors.full_messages).to include(error_message)
+        expect(timetable.warnings).to be_empty
+      end
 
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
+      it "adds no errors if the gap is long enough" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 12, 25))
 
-      expect(timetable.errors.full_messages).to include("There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation")
+        described_class.new.check_gaps(timetable, required_gap, warning: false)
+
+        expect(timetable.errors).to be_empty
+      end
+
+      it "adds no errors if one of the events does not yet have a date" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), nil)
+
+        described_class.new.check_gaps(timetable, required_gap, warning: false)
+
+        expect(timetable.errors).to be_empty
+      end
     end
 
-    it "returns no errors if no shorter gaps than required are found" do
-      timetable = Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation))
-      required_gap = {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"}
+    context "when warning is true" do
+      it "adds a warning instead of an error if the gap is shorter than required" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3))
 
-      consultation_start_event = timetable.timetable_events.where(plan_event: "scoping-consultation-start")
-      consultation_end_event = timetable.timetable_events.where(plan_event: "scoping-consultation-end")
+        described_class.new.check_gaps(timetable, required_gap, warning: true)
 
-      consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
-      consultation_end_event.update!(event_date: Date.new(2030, 12, 25))
+        expect(timetable.errors).to be_empty
+        expect(timetable.warnings).to contain_exactly(
+          have_attributes(
+            from_key: "scoping-consultation-start",
+            to_key: "scoping-consultation-end",
+            gap_label: "21 days",
+            from_name: "Start Scoping Consultation",
+            to_name: "End Scoping Consultation"
+          )
+        )
+      end
 
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
+      it "adds no warnings if the gap is long enough" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 12, 25))
 
-      expect(timetable.errors.full_messages).to be_empty
+        described_class.new.check_gaps(timetable, required_gap, warning: true)
+
+        expect(timetable.warnings).to be_empty
+      end
+
+      it "adds no warnings if one of the events does not yet have a date" do
+        set_scoping_consultation_dates(Date.new(2030, 11, 1), nil)
+
+        described_class.new.check_gaps(timetable, required_gap, warning: true)
+
+        expect(timetable.warnings).to be_empty
+      end
     end
+  end
 
-    it "returns no errors if one of the events in the comparison does not yet have a date" do
-      timetable = Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation))
-      required_gap = {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"}
+  private
 
-      consultation_start_event = timetable.timetable_events.where(plan_event: "scoping-consultation-start")
-      consultation_end_event = timetable.timetable_events.where(plan_event: "scoping-consultation-end")
-
-      consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
-      consultation_end_event.update!(event_date: nil)
-
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
-
-      expect(timetable.errors.full_messages).to be_empty
-    end
+  def set_scoping_consultation_dates(start_date, end_date)
+    timetable.timetable_events.where(plan_event: "scoping-consultation-start").update!(event_date: start_date)
+    timetable.timetable_events.where(plan_event: "scoping-consultation-end").update!(event_date: end_date)
   end
 end

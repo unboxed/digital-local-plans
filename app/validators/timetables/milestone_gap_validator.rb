@@ -16,13 +16,13 @@ module Timetables
       end
     end
 
-    def validate(timetable, warning: false)
+    def validate(timetable)
       REQUIRED_GAPS.each do |required_gap|
-        check_gaps(timetable, required_gap, warning)
+        check_gaps(timetable, required_gap, warning: options[:warning])
       end
     end
 
-    def check_gaps(timetable, required_gap, warning)
+    def check_gaps(timetable, required_gap, warning:)
       from_event = find_event(timetable, required_gap[:from])
       to_event = find_event(timetable, required_gap[:to])
       return unless from_event.event_date && to_event.event_date
@@ -30,8 +30,7 @@ module Timetables
       actual_gap = calculate_gap_between(from_event, to_event)
       return if actual_gap >= required_gap[:minimum_gap]
 
-      if warning[:warning] 
-        # looks strange because warning comes through as a hash containing the warning boolean value
+      if warning
         timetable.warnings << Warning.new(
           from_key: required_gap[:from],
           to_key: required_gap[:to],
