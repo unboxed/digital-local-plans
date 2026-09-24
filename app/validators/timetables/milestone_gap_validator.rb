@@ -10,13 +10,19 @@ module Timetables
       # TODO: Add ability to validate for maximum_gap between scoping-consultation-start and adoption
     ].freeze
 
-    def validate(timetable)
-      REQUIRED_GAPS.each do |required_gap|
-        check_gaps(timetable, required_gap)
+    Warning = Data.define(:from_key, :to_key, :gap_label, :from_name, :to_name) do
+      def message
+        I18n.t("timetables.warnings.insufficient_gap", from_name:, to_name:, gap_label:)
       end
     end
 
-    def check_gaps(timetable, required_gap)
+    def validate(timetable, warning: false)
+      REQUIRED_GAPS.each do |required_gap|
+        check_gaps(timetable, required_gap, warning)
+      end
+    end
+
+    def check_gaps(timetable, required_gap, warning)
       from_event = find_event(timetable, required_gap[:from])
       to_event = find_event(timetable, required_gap[:to])
       return unless from_event.event_date && to_event.event_date
@@ -24,15 +30,26 @@ module Timetables
       actual_gap = calculate_gap_between(from_event, to_event)
       return if actual_gap >= required_gap[:minimum_gap]
 
-      timetable.errors.add(
-        :base,
-        :insufficient_gap,
-        from_key: required_gap[:from],
-        to_key: required_gap[:to],
-        gap_label: required_gap[:label],
-        from_name: from_event.milestone_name.titleize,
-        to_name: to_event.milestone_name.titleize
-      )
+      if warning[:warning] 
+        # looks strange because warning comes through as a hash containing the warning boolean value
+        timetable.warnings << Warning.new(
+          from_key: required_gap[:from],
+          to_key: required_gap[:to],
+          gap_label: required_gap[:label],
+          from_name: from_event.milestone_name.titleize,
+          to_name: to_event.milestone_name.titleize
+        )
+      else
+        timetable.errors.add(
+          :base,
+          :insufficient_gap,
+          from_key: required_gap[:from],
+          to_key: required_gap[:to],
+          gap_label: required_gap[:label],
+          from_name: from_event.milestone_name.titleize,
+          to_name: to_event.milestone_name.titleize
+        )
+      end
     end
 
     private

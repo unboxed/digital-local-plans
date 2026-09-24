@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Timetable < ApplicationRecord
+  before_validation { warnings.clear }
+
   belongs_to :organisation
   has_many :timetable_events, dependent: :destroy
 
@@ -9,7 +11,8 @@ class Timetable < ApplicationRecord
     published: "published"
   }, default: "draft"
 
-  validates_with Timetables::MilestoneGapValidator, on: :update
+  validates_with Timetables::MilestoneGapValidator, on: :update, unless: :draft?
+  validates_with Timetables::MilestoneGapValidator, warning: true, on: :update, if: :draft?
 
   validates :status, presence: true
 
@@ -21,4 +24,8 @@ class Timetable < ApplicationRecord
   end
 
   scope :upcoming, -> { where("period_end_date > ?", Date.current).order(:period_end_date) }
+
+  def warnings
+    @warnings ||= []
+  end
 end

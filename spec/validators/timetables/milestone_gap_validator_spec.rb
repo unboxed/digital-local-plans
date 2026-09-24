@@ -14,7 +14,7 @@ RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
       consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
       consultation_end_event.update!(event_date: Date.new(2030, 11, 3))
 
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap)
+      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
 
       expect(timetable.errors.full_messages).to include("There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation")
     end
@@ -29,7 +29,7 @@ RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
       consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
       consultation_end_event.update!(event_date: Date.new(2030, 12, 25))
 
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap)
+      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
 
       expect(timetable.errors.full_messages).to be_empty
     end
@@ -44,7 +44,7 @@ RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
       consultation_start_event.update!(event_date: Date.new(2030, 11, 1))
       consultation_end_event.update!(event_date: nil)
 
-      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap)
+      Timetables::MilestoneGapValidator.new.check_gaps(timetable, required_gap, warning: false)
 
       expect(timetable.errors.full_messages).to be_empty
     end
