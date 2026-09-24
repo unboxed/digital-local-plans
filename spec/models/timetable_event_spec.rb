@@ -9,19 +9,31 @@ RSpec.describe TimetableEvent, type: :model do
 
   describe "callbacks" do
     describe "#set_entry_date" do
-      it "updates entry_date when another attribute changes" do
-        event = create(:timetable_event, notes: "Initial note")
+      it "does not set entry_date on creation" do
+        event = create(:timetable_event, entry_date: nil)
+        expect(event.entry_date).to be_nil
+      end
 
-        travel_to 1.day.from_now do
-          expect { event.update!(notes: "Updated note") }
-            .to change(event, :entry_date).to(Date.current)
+      it "sets entry_date to today when another attribute is later updated" do
+        event = create(:timetable_event, entry_date: nil)
+
+        travel_to(Date.new(2026, 9, 21)) do
+          expect { event.update!(notes: "Updated note") }.to change(event, :entry_date).to(Date.new(2026, 9, 21))
         end
       end
 
-      it "does not update entry_date when nothing else has changed" do
-        event = create(:timetable_event)
+      it "updates entry_date again on a further edit" do
+        event = create(:timetable_event, entry_date: Date.new(2026, 1, 1))
 
-        travel_to 1.day.from_now do
+        travel_to(Date.new(2026, 9, 21)) do
+          expect { event.update!(notes: "Another edit") }.to change(event, :entry_date).to(Date.new(2026, 9, 21))
+        end
+      end
+
+      it "does not update entry_date if nothing else has changed" do
+        event = create(:timetable_event, entry_date: Date.new(2026, 1, 1))
+
+        travel_to(Date.new(2026, 9, 21)) do
           expect { event.save! }.not_to change(event, :entry_date)
         end
       end
@@ -59,7 +71,7 @@ RSpec.describe TimetableEvent, type: :model do
     }
   end
 
-  describe "constants" do
+  describe "required_events" do
     it "freezes the REQUIRED_TIMETABLE_EVENTS hash" do
       expect(TimetableEvent::REQUIRED_TIMETABLE_EVENTS).to be_frozen
     end

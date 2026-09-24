@@ -69,4 +69,31 @@ RSpec.describe Timetable, type: :model do
       expect(upcoming_timetables).not_to include(past_timetable)
     end
   end
+
+  describe "milestone gap validation" do
+    let(:message) { "There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation" }
+    let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) }
+
+    before do
+      timetable.timetable_events.find_by!(plan_event: "scoping-consultation-start").update!(event_date: Date.new(2030, 11, 1))
+      timetable.timetable_events.find_by!(plan_event: "scoping-consultation-end").update!(event_date: Date.new(2030, 11, 3))
+      timetable.timetable_events.reload
+    end
+
+    it "adds a warning, not an error, when draft" do
+      timetable.status = :draft
+      timetable.valid?(:update)
+
+      expect(timetable.errors.full_messages).not_to include(message)
+      expect(timetable.warnings.map(&:message)).to include(message)
+    end
+
+    it "adds an error when published" do
+      timetable.status = :published
+      timetable.valid?(:update)
+
+      expect(timetable.errors.full_messages).to include(message)
+      expect(timetable.warnings).to be_empty
+    end
+  end
 end
