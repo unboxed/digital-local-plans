@@ -16,10 +16,6 @@
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
 
-      <% @event_form.warnings.each do |message| %>
-        <%= govuk_warning_text(text: message) %>
-      <% end %>
-
       <div class="app-container-outline">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
