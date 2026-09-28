@@ -20,6 +20,6 @@ module ViewHelper
   end
 
   def current_organisation
-    current_user.organisation
+    current_user&.organisation
   end
 end

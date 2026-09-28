@@ -7,6 +7,6 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
 
   def current_organisation
-    current_user.organisation
+    current_user&.organisation
   end
 end
