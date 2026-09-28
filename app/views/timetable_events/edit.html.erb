@@ -16,6 +16,10 @@
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
 
+      <% @event_form.warnings.each do |message| %>
+        <%= govuk_warning_text(text: message) %>
+      <% end %>
+
       <div class="app-container-outline">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
@@ -25,9 +29,14 @@
       </div>
 
       <div class="govuk-!-margin-top-6">
-        <%= f.govuk_submit 'Save' %>
+      <%= f.govuk_submit 'Save' do %>
+        <% if @event_form.warnings.any? %>
+          <button type="submit" name="edit_timetable_event_form[warnings_confirmed]" value="true" class="govuk-button govuk-button--secondary">
+            Save anyway
+          </button>
+        <% end %>
+      <% end %>
       </div>
     <% end %>
-
   </div>
 </div>

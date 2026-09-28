@@ -4,60 +4,21 @@ require "rails_helper"
 
 RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
   let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) } # TODO: add events to factory
-  let(:required_gap) { {from: "scoping-consultation-start", to: "scoping-consultation-end", minimum_gap: 21.days, label: "21 days"} }
   let(:error_message) { "There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation" }
 
   describe "#validate" do
-    before { set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3)) }
+    context "when the gap is shorter than required" do
+      before { set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3)) }
 
-    it "adds errors by default" do
-      described_class.new.validate(timetable)
-
-      expect(timetable.errors.full_messages).to include(error_message)
-      expect(timetable.warnings).to be_empty
-    end
-
-    it "adds warnings when initialised with warning: true" do
-      described_class.new(warning: true).validate(timetable)
-
-      expect(timetable.errors).to be_empty
-      expect(timetable.warnings.map(&:gap_label)).to eq(["21 days"])
-    end
-  end
-
-  describe "#check_gaps" do
-    context "when warning is false" do
-      it "adds an error if the gap is shorter than required" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3))
-
-        described_class.new.check_gaps(timetable, required_gap, warning: false)
+      it "adds an error by default" do
+        described_class.new.validate(timetable)
 
         expect(timetable.errors.full_messages).to include(error_message)
         expect(timetable.warnings).to be_empty
       end
 
-      it "adds no errors if the gap is long enough" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 12, 25))
-
-        described_class.new.check_gaps(timetable, required_gap, warning: false)
-
-        expect(timetable.errors).to be_empty
-      end
-
-      it "adds no errors if one of the events does not yet have a date" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), nil)
-
-        described_class.new.check_gaps(timetable, required_gap, warning: false)
-
-        expect(timetable.errors).to be_empty
-      end
-    end
-
-    context "when warning is true" do
-      it "adds a warning instead of an error if the gap is shorter than required" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 11, 3))
-
-        described_class.new.check_gaps(timetable, required_gap, warning: true)
+      it "adds a warning instead when initialised with warning: true" do
+        described_class.new(warning: true).validate(timetable)
 
         expect(timetable.errors).to be_empty
         expect(timetable.warnings).to contain_exactly(
@@ -70,20 +31,28 @@ RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
           )
         )
       end
+    end
 
-      it "adds no warnings if the gap is long enough" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 12, 25))
+    context "when the gap is long enough" do
+      before { set_scoping_consultation_dates(Date.new(2030, 11, 1), Date.new(2030, 12, 25)) }
 
-        described_class.new.check_gaps(timetable, required_gap, warning: true)
+      it "adds no errors or warnings" do
+        described_class.new.validate(timetable)
+        described_class.new(warning: true).validate(timetable)
 
+        expect(timetable.errors).to be_empty
         expect(timetable.warnings).to be_empty
       end
+    end
 
-      it "adds no warnings if one of the events does not yet have a date" do
-        set_scoping_consultation_dates(Date.new(2030, 11, 1), nil)
+    context "when one of the events does not yet have a date" do
+      before { set_scoping_consultation_dates(Date.new(2030, 11, 1), nil) }
 
-        described_class.new.check_gaps(timetable, required_gap, warning: true)
+      it "adds no errors or warnings" do
+        described_class.new.validate(timetable)
+        described_class.new(warning: true).validate(timetable)
 
+        expect(timetable.errors).to be_empty
         expect(timetable.warnings).to be_empty
       end
     end

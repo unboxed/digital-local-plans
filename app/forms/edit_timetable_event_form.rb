@@ -6,7 +6,7 @@ class EditTimetableEventForm
   attr_accessor :event_date_day, :event_date_month, :event_date_year,
     :actual_date_day, :actual_date_month, :actual_date_year,
     :entry_date_day, :entry_date_month, :entry_date_year,
-    :reference, :notes
+    :reference, :notes, :warnings_confirmed
 
   validates :reference, presence: true
 
@@ -32,31 +32,22 @@ class EditTimetableEventForm
   def save(event)
     return false if invalid?
 
-    timetable_error_messages = []
-
     ActiveRecord::Base.transaction do
       event.update!(reference:, notes:, event_date:, actual_date:, entry_date:)
 
       timetable = event.timetable
       timetable.timetable_events.reload
+      timetable.valid?
 
-      if timetable.invalid?
-        relevant_errors = timetable.errors.where(:base).select do |error|
-          error.options[:from_key] == event.plan_event || error.options[:to_key] == event.plan_event
-        end
-
-        if relevant_errors.any?
-          timetable_error_messages = relevant_errors.map(&:message)
-        end
+      timetable.errors.where(:base).each do |error|
+        errors.add(:base, error.message) if relevant_to?(event, error.options)
       end
+      @warnings = timetable.warnings.select { |warning| relevant_to?(event, warning.to_h) }.map(&:message)
+
+      raise ActiveRecord::Rollback if blocked?
     end
 
-    if timetable_error_messages.any?
-      timetable_error_messages.each { |message| errors.add(:base, message) }
-      return false
-    end
-
-    true
+    !blocked?
   end
 
   def event_date
@@ -71,7 +62,19 @@ class EditTimetableEventForm
     parse_date(entry_date_year, entry_date_month, entry_date_day)
   end
 
+  def warnings
+    @warnings ||= []
+  end
+
   private
+
+  def blocked?
+    errors.any? || (warnings.any? && warnings_confirmed != "true")
+  end
+
+  def relevant_to?(event, gap)
+    gap[:from_key] == event.plan_event || gap[:to_key] == event.plan_event
+  end
 
   def parse_date(year, month, day)
     return nil if year.blank? || month.blank? || day.blank?
@@ -80,8 +83,6 @@ class EditTimetableEventForm
   rescue ArgumentError
     nil
   end
-
-  private
 
   def validate_event_date
     if event_date_day.blank? || event_date_month.blank? || event_date_year.blank?

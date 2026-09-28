@@ -22,10 +22,12 @@ module Timetables
       end
     end
 
+    private
+
     def check_gaps(timetable, required_gap, warning:)
       from_event = find_event(timetable, required_gap[:from])
       to_event = find_event(timetable, required_gap[:to])
-      return unless from_event.event_date && to_event.event_date
+      return unless from_event&.event_date && to_event&.event_date
 
       actual_gap = calculate_gap_between(from_event, to_event)
       return if actual_gap >= required_gap[:minimum_gap]
@@ -50,8 +52,6 @@ module Timetables
         )
       end
     end
-
-    private
 
     def find_event(timetable, plan_event_key)
       timetable.timetable_events.find { |timetable_event| timetable_event.plan_event == plan_event_key }
