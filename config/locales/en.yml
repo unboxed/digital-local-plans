@@ -1,4 +1,12 @@
 en:
+  activerecord:
+    errors:
+      models:
+        timetable:
+          attributes:
+            base: 
+              insufficient_gap: "There needs to be at least %{gap_label} between %{from_name} and %{to_name}"
+
   activemodel:
     errors:
       models:

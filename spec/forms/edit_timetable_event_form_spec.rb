@@ -133,19 +133,83 @@ RSpec.describe EditTimetableEventForm, type: :model do
   end
 
   describe "#save" do
-    let(:event) { instance_double("TimetableEvent") }
+    let(:event) { instance_double(TimetableEvent, plan_event: "scoping-consultation-start", timetable:) }
+    let(:timetable) { instance_double(Timetable, timetable_events:) }
+    let(:timetable_events) { double("timetable_events") }
+    let(:timetable_errors) { ActiveModel::Errors.new(timetable) }
+    let(:timetable_warnings) { [] }
+
+    before { allow(timetable_events).to receive(:reload) }
 
     context "when the form is valid" do
-      it "updates the event and returns true" do
-        expect(event).to receive(:update!).with(
-          reference: "LP-101",
-          notes: "This is my local plan milestone",
-          event_date: Date.new(2028, 10, 20),
-          actual_date: Date.new(2028, 10, 15),
-          entry_date: Date.new(2028, 10, 10)
-        ).and_return(true)
+      before do
+        allow(event).to receive(:update!)
+        allow(timetable).to receive_messages(valid?: true, errors: timetable_errors, warnings: timetable_warnings)
+      end
 
-        expect(form.save(event)).to be_truthy
+      context "and the timetable has no errors or warnings" do
+        it "updates the event and returns true" do
+          expect(event).to receive(:update!).with(
+            reference: "LP-101",
+            notes: "This is my local plan milestone",
+            event_date: Date.new(2028, 10, 20),
+            actual_date: Date.new(2028, 10, 15),
+            entry_date: Date.new(2028, 10, 10)
+          )
+
+          expect(form.save(event)).to be(true)
+        end
+      end
+
+      context "and the change creates a relevant gap error" do
+        before do
+          timetable_errors.add(:base, "There needs to be at least 21 days between things",
+            from_key: "scoping-consultation-start", to_key: "scoping-consultation-end")
+        end
+
+        it "returns false and adds the error to the form" do
+          expect(form.save(event)).to be(false)
+          expect(form.errors[:base]).to include("There needs to be at least 21 days between things")
+        end
+      end
+
+      context "and the gap error is between other events" do
+        before do
+          timetable_errors.add(:base, "There needs to be at least 8 weeks between things",
+            from_key: "proposed-plan-consultation-start", to_key: "proposed-plan-consultation-end")
+        end
+
+        it "ignores the error and returns true" do
+          expect(form.save(event)).to be(true)
+          expect(form.errors).to be_empty
+        end
+      end
+
+      context "and the change creates a relevant gap warning" do
+        let(:warning) do
+          Timetables::MilestoneGapValidator::Warning.new(
+            from_key: "scoping-consultation-start",
+            to_key: "scoping-consultation-end",
+            gap_label: "21 days",
+            from_name: "Start Scoping Consultation",
+            to_name: "End Scoping Consultation"
+          )
+        end
+        let(:timetable_warnings) { [warning] }
+
+        it "returns false and exposes the warning" do
+          expect(form.save(event)).to be(false)
+          expect(form.warnings).to eq([warning.message])
+          expect(form.errors).to be_empty
+        end
+
+        context "and the user has confirmed the warnings" do
+          let(:form) { described_class.new(valid_attributes.merge(warnings_confirmed: "true")) }
+
+          it "returns true" do
+            expect(form.save(event)).to be(true)
+          end
+        end
       end
     end
 
