@@ -14,6 +14,8 @@ class SidebarComponent < ApplicationComponent
 
     if path.start_with?("/timetables")
       current_path.start_with?("/timetables")
+    elsif path.start_with?("/timetable_events")
+      current_path.start_with?("/timetable_events")
     else
       current_path == path
     end
