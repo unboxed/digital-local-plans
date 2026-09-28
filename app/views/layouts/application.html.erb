@@ -40,7 +40,9 @@
 
       <main class="govuk-main-wrapper" id="main-content">
         <%= yield(:before_content) %>
-        <%= render(FlashMessageComponent.new(flash:)) %>
+        <div class="govuk-width-container app-flash-container">
+          <%= render(FlashMessageComponent.new(flash:)) %>
+        </div>
         <%= yield %>
       </main>
     </div>
