@@ -1,0 +1,4 @@
+en:
+  timetables:
+    warnings:
+      insufficient_gap: "There needs to be at least %{gap_label} between %{from_name} and %{to_name}"
