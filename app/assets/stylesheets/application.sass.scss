@@ -41,6 +41,13 @@
   margin-left: 0;
 }
 
+.app-form-panel {
+  background-color: govuk-colour("light-grey");
+  padding: govuk-spacing(4);
+  margin-bottom: govuk-spacing(3);
+}
+
 .govuk-notification-banner__content > .govuk-body {
   max-width: none;
 }
+

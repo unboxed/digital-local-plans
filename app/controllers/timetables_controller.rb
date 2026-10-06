@@ -3,6 +3,8 @@
 class TimetablesController < ApplicationController
   before_action :set_timetable, only: %i[show]
 
+  MilestoneOption = Struct.new(:id, :name)
+
   STATUSES = {
     "draft" => {text: "In progress", colour: "blue"}
   }.freeze
@@ -16,6 +18,11 @@ class TimetablesController < ApplicationController
 
   def show
     @status = status
+    @timetable_event_date_form = Turboframes::EditTimetableEventDateForm.new
+
+    @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
+      MilestoneOption.new(id: key, name: attributes.fetch("name"))
+    end
   end
 
   private

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   resources :timetables, only: %i[index show] do
     resource :timetable_exports, only: %i[show]
+    resource :timetable_event_date, only: %i[update], module: :turboframes
   end
 
   resources :timetable_events, only: %i[edit update]

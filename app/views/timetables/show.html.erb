@@ -8,6 +8,19 @@
       <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Create timetable</h1>
       <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
     </div>
+    <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
+
+    <div class="app-form-panel govuk-body">
+      <%= form_with model: @timetable_event_date_form, url: timetable_timetable_event_date_path(@timetable), method: :patch do |f| %>
+        <%= f.govuk_error_summary %>
+
+        <%= f.govuk_collection_select :selected_milestone_keyword, @milestone_options, :id, :name, label: { text: "Which milestone do you want to enter a date for?", class: 'govuk-!-font-weight-bold' } %>
+        <%= f.govuk_date_field :event_date, legend: { text: 'Enter the planned date for this milestone', size: 's' }, hint: { text: 'For example, 27 3 2026', size: 's'} %>
+        <%= f.govuk_submit 'Save' %>
+      <% end %>
+    </div>
+
+    <p class="govuk-body">TODO: Add yellow box here calculating the date from commencement to end</p>
 
     <%= govuk_table do |table| %>
       <% table.with_head do |head| %>
