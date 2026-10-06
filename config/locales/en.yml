@@ -19,3 +19,10 @@ en:
               invalid: "Enter a valid planned date"
               not_in_future: "The planned date must be in the future"
               too_far_in_future: "The planned date must be before 2050"
+        turboframes/edit_timetable_event_date_form:
+          attributes:
+            event_date:
+              blank: "Enter a planned date"
+              invalid: "Enter a valid planned date"
+              not_in_future: "The planned date must be in the future"
+              too_far_in_future: "The planned date must be before 2050"
