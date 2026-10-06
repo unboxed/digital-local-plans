@@ -16,8 +16,13 @@ module Turboframes
       if @timetable_event_date_form.save(event)
         flash[:success] = "#{TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(event.plan_event, "name")} updated"
         redirect_to timetable_path(@timetable)
+      else
+        @status = TimetablesController::STATUSES.fetch(@timetable.status)
+        @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
+          TimetablesController::MilestoneOption.new(id: key, name: attributes.fetch("name"))
+        end
+        render "timetables/show", status: :unprocessable_content
       end
-      # TODO: Add some fallback behaviour
     end
 
     def set_timetable
