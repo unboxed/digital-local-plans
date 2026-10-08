@@ -24,12 +24,11 @@
         </div>
       </div>
 
+
       <div class="govuk-!-margin-top-6">
       <%= f.govuk_submit 'Save' do %>
         <% if @event_form.warnings.any? %>
-          <button type="submit" name="edit_timetable_event_form[warnings_confirmed]" value="true" class="govuk-button govuk-button--secondary">
-            Save anyway
-          </button>
+          <%= f.govuk_submit "Save anyway", name: "edit_timetable_event_form[warnings_confirmed]", value: "true", secondary: true %>
         <% end %>
       <% end %>
       </div>
