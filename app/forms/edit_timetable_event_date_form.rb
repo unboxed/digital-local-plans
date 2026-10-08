@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Turboframes::EditTimetableEventDateForm
+class EditTimetableEventDateForm
   include ActiveModel::Model
 
   attr_accessor :selected_milestone_keyword, :event_date_day, :event_date_month, :event_date_year

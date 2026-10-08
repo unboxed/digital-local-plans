@@ -19,7 +19,7 @@ class TimetablesController < ApplicationController
   def show
     @status = status
     @plan_duration = plan_duration
-    @timetable_event_date_form = Turboframes::EditTimetableEventDateForm.new
+    @timetable_event_date_form = EditTimetableEventDateForm.new
 
     @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
       MilestoneOption.new(id: key, name: attributes.fetch("name"))
