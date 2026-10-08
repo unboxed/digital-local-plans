@@ -1,42 +1,55 @@
 <%= content_for :page_title, 'Create timetable' %>
 <%= content_for :before_content, govuk_back_link_to(home_path) %>
 
+<%= form_with model: @timetable_event_date_form, url: timetable_timetable_event_date_path(@timetable), method: :patch do |f| %>
+  <%= f.govuk_error_summary %>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <div class="app-page-header__title-row">
+          <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Create timetable</h1>
+          <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
+        </div>
+        <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-three-quarters">
-    <div class="app-page-header__title-row">
-      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Create timetable</h1>
-      <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
-    </div>
+        <div class="app-select-panel govuk-body">
+          <%= f.govuk_collection_select :selected_milestone_keyword, @milestone_options, :id, :name, label: { text: "Which milestone do you want to enter a date for?", class: 'govuk-!-font-weight-bold' } %>
+          <%= f.govuk_date_field :event_date, legend: { text: 'Enter the planned date for this milestone', size: 's' }, hint: { text: 'For example, 27 3 2026', size: 's'} %>
+          <%= f.govuk_submit 'Save' %>
+        </div>
 
-    <%= govuk_table do |table| %>
-      <% table.with_head do |head| %>
-        <% head.with_row do |row| %>
-          <%= row.with_cell(text: 'Milestone', classes: 'app-table__header--bold-black') %>
-          <%= row.with_cell(text: 'Date', classes: 'app-table__header--bold-black') %>
-          <%= row.with_cell(text: 'Time Period', classes: 'app-table__header--bold-black govuk-!-width-one-third') %>
-          <%= row.with_cell(text: 'Action', classes: 'app-table__header--bold-black') %>
+        <% if @plan_duration %>
+          <div class="app-duration-ribbon govuk-body-s govuk-!-font-weight-bold">Your timetable is currently <%= @plan_duration %> months from commencement to adoption</div>
         <% end %>
-      <% end %>
 
-      <% table.with_body do |body| %>
-        <% @timetable.timetable_events.order(:id).each_with_index do |event, i| %>
-          <% body.with_row do |row| %>
-            <%= row.with_cell(text: "#{i+1}. #{event.milestone_name}", classes: "govuk-!-font-weight-bold") %>
-            <%= row.with_cell(text: event.event_date.present? ? event.event_date.to_fs(:govuk) : "Not yet completed", classes: "govuk-hint") %>
-            <%= row.with_cell(text: event.timing_description, classes: "govuk-hint") %>
-            <%= row.with_cell do %>
-              <% if event.event_date.present? %>
-                <%= govuk_link_to 'Change', edit_timetable_event_path(event) %>
-              <% else %>
-                <%= govuk_link_to 'Add date', edit_timetable_event_path(event) %>
+        <%= govuk_table do |table| %>
+          <% table.with_head do |head| %>
+            <% head.with_row do |row| %>
+              <%= row.with_cell(text: 'Milestone', classes: 'app-table__header--bold-black') %>
+              <%= row.with_cell(text: 'Date', classes: 'app-table__header--bold-black') %>
+              <%= row.with_cell(text: 'Time Period', classes: 'app-table__header--bold-black') %>
+              <%= row.with_cell(text: 'Action', classes: 'app-table__header--bold-black app-table__cell--action') %>
+            <% end %>
+          <% end %>
+
+          <% table.with_body do |body| %>
+            <% @timetable.timetable_events.order(:id).each_with_index do |event, i| %>
+              <% body.with_row do |row| %>
+                <%= row.with_cell(text: "#{i+1}. #{event.milestone_name}", classes: "govuk-!-font-weight-bold") %>
+                <%= row.with_cell(text: event.event_date.present? ? event.event_date.to_fs(:govuk) : "Not yet completed", classes: "govuk-hint") %>
+                <%= row.with_cell(text: event.timing_description, classes: "govuk-hint") %>
+                <%= row.with_cell do %>
+                  <% if event.event_date.present? %>
+                    <%= govuk_link_to 'Change', edit_timetable_event_path(event) %>
+                  <% else %>
+                    <%= govuk_link_to 'Add date', edit_timetable_event_path(event) %>
+                  <% end %>
+                <% end %>
               <% end %>
             <% end %>
           <% end %>
         <% end %>
-      <% end %>
-    <% end %>
 
-    <%= govuk_button_link_to "Export CSV", timetable_timetable_exports_path(@timetable) %>
-  </div>
-</div>
+        <%= govuk_button_link_to "Export CSV", timetable_timetable_exports_path(@timetable) %>
+      </div>
+    </div>
+  <% end %>

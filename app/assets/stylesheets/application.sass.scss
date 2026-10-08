@@ -21,6 +21,11 @@
   padding-right: govuk-spacing(3);
 }
 
+.app-table__cell--action {
+  width: 7%;
+  white-space: nowrap;
+}
+
 .app-page-header__title-row {
   display: flex;
   align-items: center;
@@ -41,6 +46,21 @@
   margin-left: 0;
 }
 
+.app-select-panel {
+  background-color: govuk-colour("light-grey");
+  padding: govuk-spacing(4);
+  margin-bottom: govuk-spacing(5);
+  border-left: 6px solid #161717a9;
+}
+
+.app-duration-ribbon {
+  background-color: #fffdf2;
+  padding: govuk-spacing(4);
+  margin-bottom: govuk-spacing(5);
+  border-left: 6px solid #ffe640;
+}
+
 .govuk-notification-banner__content > .govuk-body {
   max-width: none;
 }
+
