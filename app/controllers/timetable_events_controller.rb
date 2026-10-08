@@ -20,6 +20,7 @@ class TimetableEventsController < ApplicationController
       redirect_to timetables_path(current_organisation.current_timetable)
       flash[:success] = "#{@event_name} updated"
     else
+      flash.now[:info] = ["Some dates may be too close together", @event_form.warnings.join(" ")] if @event_form.warnings.any?
       @status = status
       render :edit, status: :unprocessable_content
     end
@@ -44,6 +45,7 @@ class TimetableEventsController < ApplicationController
       edit_timetable_event_form: [
         :reference,
         :notes,
+        :warnings_confirmed,
         :"event_date(1i)", :"event_date(2i)", :"event_date(3i)",
         :"actual_date(1i)", :"actual_date(2i)", :"actual_date(3i)",
         :"entry_date(1i)", :"entry_date(2i)", :"entry_date(3i)"
