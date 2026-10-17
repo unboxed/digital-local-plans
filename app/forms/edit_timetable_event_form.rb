@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class EditTimetableEventForm
-  include ActiveModel::Model
   include TimetableEventForm
 
   attr_accessor :event_date_day, :event_date_month, :event_date_year,
     :actual_date_day, :actual_date_month, :actual_date_year,
     :entry_date_day, :entry_date_month, :entry_date_year,
-    :reference, :notes, :warnings_confirmed
+    :reference, :notes
 
   validates :reference, presence: true
 

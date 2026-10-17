@@ -15,6 +15,9 @@
           <%= f.govuk_collection_select :selected_milestone_keyword, @milestone_options, :id, :name, label: { text: "Which milestone do you want to enter a date for?", class: 'govuk-!-font-weight-bold' } %>
           <%= f.govuk_date_field :event_date, legend: { text: 'Enter the planned date for this milestone', size: 's' }, hint: { text: 'For example, 27 3 2026', size: 's'} %>
           <%= f.govuk_submit 'Save' %>
+          <% if @timetable_event_date_form.warnings.any? %>
+            <%= f.govuk_submit "Save anyway", name: "edit_timetable_event_date_form[warnings_confirmed]", value: "true", secondary: true %>
+          <% end %>
         </div>
 
         <% if @plan_duration %>
