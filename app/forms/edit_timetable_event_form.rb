@@ -33,6 +33,6 @@ class EditTimetableEventForm
   private
 
   def event_attributes
-    { reference:, notes:, event_date:, actual_date:, entry_date: }
+    {reference:, notes:, event_date:, actual_date:, entry_date:}
   end
 end
