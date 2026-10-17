@@ -6,7 +6,7 @@ en:
           attributes:
             base: 
               insufficient_gap: "%{from_name} should come at least %{gap_label} after %{to_name}"
-              out_of_chronology: "%{to_name} cannot be before %{from_name}"
+              out_of_chronology: "%{to_name} cannot come before %{from_name}"
 
   activemodel:
     errors:

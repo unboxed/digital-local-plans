@@ -18,7 +18,7 @@ class TimetableEventsController < ApplicationController
 
     if @event_form.save(@timetable_event)
       redirect_to timetables_path(current_organisation.current_timetable)
-      flash.now[:success] = "#{@event_name} updated"
+      flash[:success] = "#{@event_name} updated"
     else
       flash.now[:warning] = ["Some dates do not meet requirements", @event_form.warnings.join(" ")] if @event_form.warnings.any?
       @status = status
