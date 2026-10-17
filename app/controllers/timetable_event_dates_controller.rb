@@ -13,7 +13,7 @@ class TimetableEventDatesController < ApplicationController
     end
 
     if @timetable_event_date_form.save(event)
-      flash.now[:success] = "#{TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(event.plan_event, "name")} updated"
+      flash[:success] = "#{TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(event.plan_event, "name")} updated"
       redirect_to timetable_path(@timetable)
     else
       @status = TimetablesController::STATUSES.fetch(@timetable.status)
