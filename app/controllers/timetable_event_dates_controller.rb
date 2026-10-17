@@ -17,6 +17,7 @@ class TimetableEventDatesController < ApplicationController
       redirect_to timetable_path(@timetable)
     else
       @status = TimetablesController::STATUSES.fetch(@timetable.status)
+      @plan_duration = plan_duration
       @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
         TimetablesController::MilestoneOption.new(id: key, name: attributes.fetch("name"))
       end
