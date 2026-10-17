@@ -61,7 +61,7 @@ RSpec.describe TimetableEventForm do
 
       it "returns false and copies the error onto the form" do
         expect(form.save(event)).to be(false)
-        expect(form.errors[:base]).to include("There needs to be at least 21 days between things")
+        expect(form.errors[:event_date]).to include("There needs to be at least 21 days between things")
       end
     end
 

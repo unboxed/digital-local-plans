@@ -20,7 +20,7 @@ module TimetableEventForm
       timetable.valid?
 
       timetable.errors.where(:base).each do |error|
-        errors.add(:base, error.message) if relevant_to?(event, error.options)
+        errors.add(:event_date, error.message) if relevant_to?(event, error.options)
       end
       @warnings = timetable.warnings.select { |warning| relevant_to?(event, warning.to_h) }.map(&:message)
 

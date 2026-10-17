@@ -3,9 +3,9 @@
 module Timetables
   class MilestoneChronologyValidator < ActiveModel::Validator
     def validate(timetable)
-      dated_events = milestones.keys.filter_map do |key|
+      dated_events = milestones.keys.map do |key|
         timetable.timetable_events.find { |event| event.plan_event == key && event.event_date }
-      end
+      end.compact
 
       dated_events.each_cons(2) do |earlier, later|
         next unless later.event_date < earlier.event_date
