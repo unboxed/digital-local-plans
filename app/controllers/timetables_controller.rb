@@ -33,11 +33,11 @@ class TimetablesController < ApplicationController
   end
 
   def plan_duration
-    commencement = @timetable.timetable_events.find_by(plan_event: 'gateway-1-self-assessment')
-    adoption = @timetable.timetable_events.find_by(plan_event: 'adopted')
+    commencement = @timetable.timetable_events.find_by(plan_event: "gateway-1-self-assessment")
+    adoption = @timetable.timetable_events.find_by(plan_event: "adopted")
 
     start_date = commencement&.event_date
-    end_date   = adoption&.event_date
+    end_date = adoption&.event_date
 
     return unless start_date && end_date
 

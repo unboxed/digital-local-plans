@@ -9,9 +9,9 @@ class EditTimetableEventDateForm
   validate :validate_event_date
   validate :validate_future_and_max_dates
 
-private
+  private
 
   def event_attributes
-    { event_date: }
+    {event_date:}
   end
 end
