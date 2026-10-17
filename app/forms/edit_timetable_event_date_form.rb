@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class EditTimetableEventDateForm
-  include ActiveModel::Model
   include TimetableEventForm
 
-  attr_accessor :selected_milestone_keyword, :event_date_day, :event_date_month, :event_date_year, :warnings_confirmed
+  attr_accessor :selected_milestone_keyword, :event_date_day, :event_date_month, :event_date_year
 
   validate :validate_event_date
   validate :validate_future_and_max_dates
