@@ -18,9 +18,9 @@ class TimetableEventsController < ApplicationController
 
     if @event_form.save(@timetable_event)
       redirect_to timetables_path(current_organisation.current_timetable)
-      flash[:success] = "#{@event_name} updated"
+      flash.now[:success] = "#{@event_name} updated"
     else
-      flash[:warning] = ["Some dates do not meet requirements", @event_form.warnings.join(" ")] if @event_form.warnings.any?
+      flash.now[:warning] = ["Some dates do not meet requirements", @event_form.warnings.join(" ")] if @event_form.warnings.any?
       @status = status
       render :edit, status: :unprocessable_content
     end
