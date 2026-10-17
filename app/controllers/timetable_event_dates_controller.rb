@@ -20,6 +20,7 @@ class TimetableEventDatesController < ApplicationController
       @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
         TimetablesController::MilestoneOption.new(id: key, name: attributes.fetch("name"))
       end
+      flash.now[:info] = ["Some dates may be too close together", @timetable_event_date_form.warnings.join(" ")] if @timetable_event_date_form.warnings.any?
       render "timetables/show", status: :unprocessable_content
     end
   end
@@ -33,6 +34,7 @@ class TimetableEventDatesController < ApplicationController
     permitted = params.expect(
       edit_timetable_event_date_form: [
         :selected_milestone_keyword,
+        :warnings_confirmed,
         :"event_date(1i)", :"event_date(2i)", :"event_date(3i)"
       ]
     )
