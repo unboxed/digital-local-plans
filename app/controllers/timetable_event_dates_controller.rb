@@ -13,7 +13,7 @@ class TimetableEventDatesController < ApplicationController
     end
 
     if @timetable_event_date_form.save(event)
-      flash[:success] = "#{TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(event.plan_event, "name")} updated"
+      flash.now[:success] = "#{TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(event.plan_event, "name")} updated"
       redirect_to timetable_path(@timetable)
     else
       @status = TimetablesController::STATUSES.fetch(@timetable.status)
@@ -21,7 +21,7 @@ class TimetableEventDatesController < ApplicationController
       @milestone_options = TimetableEvent::REQUIRED_TIMETABLE_EVENTS.map do |key, attributes|
         TimetablesController::MilestoneOption.new(id: key, name: attributes.fetch("name"))
       end
-      flash[:warning] = ["Some dates do not meet requirements", @timetable_event_date_form.warnings.join(" ")] if @timetable_event_date_form.warnings.any?
+      flash.now[:warning] = ["Some dates do not meet requirements", @timetable_event_date_form.warnings.join(" ")] if @timetable_event_date_form.warnings.any?
       render "timetables/show", status: :unprocessable_content
     end
   end
