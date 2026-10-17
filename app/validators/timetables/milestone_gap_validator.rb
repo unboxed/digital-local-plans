@@ -7,7 +7,6 @@ module Timetables
       {from: "public-notice-intention-commence", to: "gateway-1-self-assessment", minimum_gap: 4.months, label: "4 months"},
       {from: "plan-content-evidence-consultation-start", to: "plan-content-evidence-consultation-end", minimum_gap: 6.weeks, label: "6 weeks"},
       {from: "proposed-plan-consultation-start", to: "proposed-plan-consultation-end", minimum_gap: 8.weeks, label: "8 weeks"}
-      # TODO: Add ability to validate for maximum_gap between scoping-consultation-start and adoption
     ].freeze
 
     Warning = Data.define(:from_key, :to_key, :gap_label, :from_name, :to_name) do

@@ -14,6 +14,8 @@ class Timetable < ApplicationRecord
   validates_with Timetables::MilestoneGapValidator, on: :update, unless: :draft?
   validates_with Timetables::MilestoneGapValidator, warning: true, on: :update, if: :draft?
 
+  validates_with Timetables::MilestoneChronologyValidator, on: :update
+
   validates :status, presence: true
 
   with_options unless: :draft? do
