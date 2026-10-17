@@ -10,6 +10,7 @@ module Timetables
       timetable = @organisation.timetables.build(status: :draft)
 
       Timetable.transaction do
+        timetable.plan = @organisation.plans.create!(status: :draft) # TODO: Change how plans are initialized later
         timetable.save!
         build_required_events(timetable)
       end
@@ -25,7 +26,7 @@ module Timetables
       TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each_key do |event_key|
         timetable.timetable_events.create!(
           plan_event: event_key,
-          plan: timetable.reference,
+          plan: timetable.reference, # TODO: set this to the plan reference
           status: :draft
         )
       end

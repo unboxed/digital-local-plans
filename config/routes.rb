@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     resource :timetable_exports, only: %i[show]
   end
 
+  resources :plans, only: %i[edit update]
+
   resources :timetable_events, only: %i[edit update]
 
   mount DlpAdmin::Engine, at: "/admin", as: :dlp_admin

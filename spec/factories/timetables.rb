@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :timetable do
     association :organisation
+    plan { association :plan, organisation: }
 
     dataset { "local-plan" }
     description { Faker::Lorem.paragraph }

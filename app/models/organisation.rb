@@ -2,6 +2,7 @@
 
 class Organisation < ApplicationRecord
   has_many :users, dependent: :destroy
+  has_many :plans, dependent: :destroy
   has_many :timetables, dependent: :destroy
 
   validates :name, presence: true

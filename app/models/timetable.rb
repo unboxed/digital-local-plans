@@ -4,6 +4,7 @@ class Timetable < ApplicationRecord
   before_validation { warnings.clear }
 
   belongs_to :organisation
+  belongs_to :plan
   has_many :timetable_events, dependent: :destroy
 
   enum :status, {
@@ -25,7 +26,7 @@ class Timetable < ApplicationRecord
       presence: true
   end
 
-  scope :upcoming, -> { where("period_end_date > ?", Date.current).order(:period_end_date) }
+  scope :upcoming, -> { where("period_end_date > ?", Date.current.year).order(:period_end_date) }
 
   def warnings
     @warnings ||= []

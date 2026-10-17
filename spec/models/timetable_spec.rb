@@ -55,9 +55,9 @@ RSpec.describe Timetable, type: :model do
   describe ".upcoming" do
     let(:organisation) { create(:organisation) }
 
-    let!(:past_timetable) { create(:timetable, organisation: organisation, period_end_date: 2.years.ago) }
-    let!(:near_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 5.years.from_now) }
-    let!(:distant_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 10.years.from_now) }
+    let!(:past_timetable) { create(:timetable, organisation:, period_end_date: Date.current.year - 2) }
+    let!(:near_future_timetable) { create(:timetable, organisation:, period_end_date: Date.current.year + 5) }
+    let!(:distant_future_timetable) { create(:timetable, organisation:, period_end_date: Date.current.year + 10) }
 
     subject(:upcoming_timetables) { described_class.upcoming }
 
