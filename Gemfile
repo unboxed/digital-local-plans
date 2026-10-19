@@ -49,7 +49,7 @@ group :development, :test do
   gem "shoulda-matchers"
   gem "faker"
 
-  gem "standard", "~> 1.56", require: false
+  gem "standard", "~> 1.57", require: false
   gem "standard-custom", require: false
   gem "standard-performance", require: false
   gem "standard-rails", require: false
