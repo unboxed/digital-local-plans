@@ -21,10 +21,10 @@ permissions:
 env:
   # Account IDs aren't secret, so embedding this avoids needing repo-admin to
   # manage an environment secret. The OIDC role trust still scopes to this repo.
-  AWS_ACCOUNT_ID: "199087229054"
+  AWS_ACCOUNT_ID: "063570950861"
   AWS_REGION: eu-west-2
-  APP_NAME: bridge
-  CONTAINER_NAME: bridge
+  APP_NAME: dlp
+  CONTAINER_NAME: dlp
 
 jobs:
   build-image:
@@ -45,8 +45,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::063570950861:role/dlp_github_deploy_${{ inputs.environment-name }}
+          aws-region: eu-west-2
 
       - name: Login to Amazon ECR
         id: ecr
@@ -64,7 +64,7 @@ jobs:
 
       - name: Build, tag & push
         env:
-          REPO: ${{ steps.ecr.outputs.registry }}/${{ env.APP_NAME }}/${{ inputs.environment-name }}
+          REPO: ${{ steps.ecr.outputs.registry }}/dlp/${{ inputs.environment-name }}
           TAG: ${{ steps.sha.outputs.sha }}
         run: |
           DOCKER_BUILDKIT=1 docker buildx build \
@@ -91,8 +91,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::063570950861:role/dlp_github_deploy_${{ inputs.environment-name }}
+          aws-region: eu-west-2
 
       - name: Compile assets
         env:
@@ -106,7 +106,7 @@ jobs:
 
       - name: Sync assets to S3 bucket
         run: |
-          aws s3 sync public/assets s3://${{ env.APP_NAME }}-${{ inputs.environment-name }}-assets-${{ env.AWS_ACCOUNT_ID }}-${{ env.AWS_REGION }}-an/assets --size-only
+          aws s3 sync public/assets s3://dlp-${{ inputs.environment-name }}-assets-063570950861-eu-west-2-an/assets --size-only
 
   db-migrate:
     name: Migrate database (${{ inputs.environment-name }})
@@ -117,13 +117,13 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::063570950861:role/dlp_github_deploy_${{ inputs.environment-name }}
+          aws-region: eu-west-2
 
       - name: Run db:prepare as a one-off task on the new image
         env:
-          CLUSTER: ${{ env.APP_NAME }}-${{ inputs.environment-name }}
-          WEB_FAMILY: ${{ env.APP_NAME }}-web-${{ inputs.environment-name }}
+          CLUSTER: dlp-${{ inputs.environment-name }}
+          WEB_FAMILY: dlp-web-${{ inputs.environment-name }}
           IMAGE: ${{ needs.build-image.outputs.image }}
         run: |
           set -euo pipefail
@@ -163,8 +163,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::063570950861:role/dlp_github_deploy_${{ inputs.environment-name }}
+          aws-region: eu-west-2
 
       - name: Download & re-render task definition
         run: |
@@ -186,8 +186,8 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@a00d4d57ac0de1a99b39fe469f3d898d38717c2b # v2
         with:
           task-definition: ${{ steps.taskdef.outputs.task-definition }}
-          service: ${{ env.APP_NAME }}-${{ matrix.service }}-${{ inputs.environment-name }}
-          cluster: ${{ env.APP_NAME }}-${{ inputs.environment-name }}
+          service: dlp-${{ matrix.service }}-${{ inputs.environment-name }}
+          cluster: dlp-${{ inputs.environment-name }}
           wait-for-service-stability: true
           codedeploy-appspec: ${{ matrix.service == 'web' && '.aws/appspec.yml' || '' }}
           codedeploy-application: ${{ matrix.service == 'web' && format('{0}-{1}', env.APP_NAME, inputs.environment-name) || '' }}
