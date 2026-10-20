@@ -1,8 +1,6 @@
 <%= content_for :page_title, 'Create timetable' %>
 <%= content_for :before_content, govuk_back_link_to(home_path) %>
 
-<%= form_with model: @timetable_event_date_form, url: timetable_timetable_event_date_path(@timetable), method: :patch do |f| %>
-  <%= f.govuk_error_summary %>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
         <div class="app-page-header__title-row">
@@ -10,15 +8,6 @@
           <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
         </div>
         <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
-
-        <div class="app-select-panel govuk-body">
-          <%= f.govuk_collection_select :selected_milestone_keyword, @milestone_options, :id, :name, label: { text: "Which milestone do you want to enter a date for?", class: 'govuk-!-font-weight-bold' } %>
-          <%= f.govuk_date_field :event_date, legend: { text: 'Enter the planned date for this milestone', size: 's' }, hint: { text: 'For example, 27 3 2026', size: 's'} %>
-          <%= f.govuk_submit 'Save' %>
-          <% if @timetable_event_date_form.warnings.any? %>
-            <%= f.govuk_submit "Save anyway", name: "edit_timetable_event_date_form[warnings_confirmed]", value: "true", secondary: true %>
-          <% end %>
-        </div>
 
         <% if @plan_duration %>
           <div class="app-duration-ribbon govuk-body-s govuk-!-font-weight-bold">Your timetable is currently <%= @plan_duration %> months from commencement to adoption</div>
@@ -55,4 +44,4 @@
         <%= govuk_button_link_to "Export CSV", timetable_timetable_exports_path(@timetable) %>
       </div>
     </div>
-  <% end %>
+

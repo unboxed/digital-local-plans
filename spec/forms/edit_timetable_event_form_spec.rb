@@ -21,25 +21,205 @@ RSpec.describe EditTimetableEventForm, type: :model do
     }
   end
 
-  describe "#save" do
-    let(:event) { instance_double(TimetableEvent, plan_event: "scoping-consultation-start", timetable:) }
-    let(:timetable) do
-      instance_double(Timetable, timetable_events: double(reload: nil), valid?: true,
-        errors: ActiveModel::Errors.new(Timetable.new), warnings: [])
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:reference) }
+
+    describe "#validate_event_date" do
+      context "when event_date fields are missing" do
+        let(:form) { described_class.new(valid_attributes.merge(event_date_day: nil)) }
+
+        it "is invalid and adds a blank error" do
+          expect(form).to be_invalid
+          expect(form.errors[:event_date]).to include("Enter a planned date")
+        end
+      end
+
+      context "when event_date contains an invalid date value" do
+        let(:form) do
+          described_class.new(
+            valid_attributes.merge(event_date_day: "1", event_date_month: "February", event_date_year: "2028")
+          )
+        end
+
+        it "is invalid and adds an invalid error" do
+          expect(form).to be_invalid
+          expect(form.errors[:event_date]).to include("Enter a valid planned date")
+        end
+      end
     end
 
-    it "updates the event with all the form's fields" do
-      allow(event).to receive(:update!)
+    describe "#validate_future_and_max_dates" do
+      context "when event_date is in the past" do
+        let(:form) do
+          described_class.new(
+            valid_attributes.merge(event_date_day: "1", event_date_month: "1", event_date_year: "2020")
+          )
+        end
 
-      form.save(event)
+        it "is invalid and adds a not_in_future error" do
+          expect(form).to be_invalid
+          expect(form.errors[:event_date]).to include("The planned date must be in the future")
+        end
+      end
 
-      expect(event).to have_received(:update!).with({
-        reference: "LP-101",
-        notes: "This is my local plan milestone",
-        event_date: Date.new(2028, 10, 20),
-        actual_date: Date.new(2028, 10, 15),
-        entry_date: Date.new(2028, 10, 10)
-      })
+      context "when event_date year is greater than 2050" do
+        let(:form) do
+          described_class.new(
+            valid_attributes.merge(event_date_day: "1", event_date_month: "1", event_date_year: "2051")
+          )
+        end
+
+        it "is invalid and adds a too_far_in_future error" do
+          expect(form).to be_invalid
+          expect(form.errors[:event_date]).to include("The planned date must be before 2050")
+        end
+      end
+
+      context "when event_date is valid and in the future" do
+        it "is valid" do
+          expect(form).to be_valid
+        end
+      end
+    end
+  end
+
+  describe "date parsing helper methods" do
+    it "parses #event_date correctly" do
+      expect(form.event_date).to eq(Date.new(2028, 10, 20))
+    end
+
+    it "parses #actual_date correctly" do
+      expect(form.actual_date).to eq(Date.new(2028, 10, 15))
+    end
+
+    it "parses #entry_date correctly" do
+      expect(form.entry_date).to eq(Date.new(2028, 10, 10))
+    end
+
+    context "when optional date components are missing" do
+      let(:form) { described_class.new(valid_attributes.merge(actual_date_day: nil)) }
+
+      it "returns nil for that date" do
+        expect(form.actual_date).to be_nil
+      end
+    end
+  end
+
+  describe ".build_from_event" do
+    let(:event) do
+      double(
+        "Event",
+        reference: "REF-999",
+        notes: "Existing notes",
+        event_date: Date.new(2027, 5, 12),
+        actual_date: Date.new(2027, 5, 10),
+        entry_date: nil
+      )
+    end
+
+    subject(:built_form) { described_class.build_from_event(event) }
+
+    it "initializes the form with attributes extracted from the event" do
+      expect(built_form.reference).to eq("REF-999")
+      expect(built_form.notes).to eq("Existing notes")
+      expect(built_form.event_date_day).to eq(12)
+      expect(built_form.event_date_month).to eq(5)
+      expect(built_form.event_date_year).to eq(2027)
+      expect(built_form.actual_date_day).to eq(10)
+      expect(built_form.actual_date_month).to eq(5)
+      expect(built_form.actual_date_year).to eq(2027)
+      expect(built_form.entry_date_day).to be_nil
+    end
+  end
+
+  describe "#save" do
+    let(:event) { instance_double(TimetableEvent, plan_event: "scoping-consultation-start", timetable:) }
+    let(:timetable) { instance_double(Timetable, timetable_events:) }
+    let(:timetable_events) { double("timetable_events") }
+    let(:timetable_errors) { ActiveModel::Errors.new(timetable) }
+    let(:timetable_warnings) { [] }
+
+    before { allow(timetable_events).to receive(:reload) }
+
+    context "when the form is valid" do
+      before do
+        allow(event).to receive(:update!)
+        allow(timetable).to receive_messages(valid?: true, errors: timetable_errors, warnings: timetable_warnings)
+      end
+
+      context "and the timetable has no errors or warnings" do
+        it "updates the event and returns true" do
+          expect(event).to receive(:update!).with(
+            reference: "LP-101",
+            notes: "This is my local plan milestone",
+            event_date: Date.new(2028, 10, 20),
+            actual_date: Date.new(2028, 10, 15),
+            entry_date: Date.new(2028, 10, 10)
+          )
+
+          expect(form.save(event)).to be(true)
+        end
+      end
+
+      context "and the change creates a relevant gap error" do
+        before do
+          timetable_errors.add(:base, "There needs to be at least 21 days between things",
+            from_key: "scoping-consultation-start", to_key: "scoping-consultation-end")
+        end
+
+        it "returns false and adds the error to the form" do
+          expect(form.save(event)).to be(false)
+          expect(form.errors[:base]).to include("There needs to be at least 21 days between things")
+        end
+      end
+
+      context "and the gap error is between other events" do
+        before do
+          timetable_errors.add(:base, "There needs to be at least 8 weeks between things",
+            from_key: "proposed-plan-consultation-start", to_key: "proposed-plan-consultation-end")
+        end
+
+        it "ignores the error and returns true" do
+          expect(form.save(event)).to be(true)
+          expect(form.errors).to be_empty
+        end
+      end
+
+      context "and the change creates a relevant gap warning" do
+        let(:warning) do
+          Timetables::MilestoneGapValidator::Warning.new(
+            from_key: "scoping-consultation-start",
+            to_key: "scoping-consultation-end",
+            gap_label: "21 days",
+            from_name: "Start Scoping Consultation",
+            to_name: "End Scoping Consultation"
+          )
+        end
+        let(:timetable_warnings) { [warning] }
+
+        it "returns false and exposes the warning" do
+          expect(form.save(event)).to be(false)
+          expect(form.warnings).to eq([warning.message])
+          expect(form.errors).to be_empty
+        end
+
+        context "and the user has confirmed the warnings" do
+          let(:form) { described_class.new(valid_attributes.merge(warnings_confirmed: "true")) }
+
+          it "returns true" do
+            expect(form.save(event)).to be(true)
+          end
+        end
+      end
+    end
+
+    context "when the form is invalid" do
+      let(:form) { described_class.new(valid_attributes.merge(reference: nil)) }
+
+      it "returns false and does not update the event" do
+        expect(event).not_to receive(:update!)
+        expect(form.save(event)).to be(false)
+      end
     end
   end
 end
