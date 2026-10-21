@@ -34,7 +34,7 @@ jobs:
     outputs:
       image: ${{ steps.image.outputs.uri }}
     steps:
-      - uses: actions/checkout@7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ inputs.ref }}
 
@@ -83,7 +83,7 @@ jobs:
     environment: ${{ inputs.environment-name }}
 
     steps:
-      - uses: actions/checkout@7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Set up Ruby and Node
         uses: ./.github/actions/setup-app
@@ -155,7 +155,7 @@ jobs:
       matrix:
         service: [worker, console, web]
     steps:
-      - uses: actions/checkout@7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         if: matrix.service == 'web'
         with:
           ref: ${{ inputs.ref }}
