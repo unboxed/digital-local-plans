@@ -41,7 +41,17 @@
           <% end %>
         <% end %>
 
-        <%= govuk_button_link_to "Export CSV", timetable_timetable_exports_path(@timetable) %>
+        <div class="govuk-!-margin-bottom-6 app-container-top-and-bottom-outline">
+          <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Export data</h2>
+          <%= govuk_link_to(
+                  'Export and open Check and Provide service',
+                  'https://provide.planning.data.gov.uk/',
+                  target: '_blank',
+                  class: 'govuk-body-m',
+                  onclick: "window.location.href='#{timetable_timetable_exports_path(@timetable)}';"
+                ) %>
+          <p class="govuk-body govuk-hint govuk-!-margin-top-2">This will export your timetable as a CSV and open the Check and Provide service in a new tab, where you can upload your CSV.</p>
+        </div>
       </div>
     </div>
 
