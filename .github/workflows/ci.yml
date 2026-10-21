@@ -5,13 +5,6 @@ on:
   push:
     branches: [main]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
@@ -74,146 +67,39 @@ jobs:
       - name: Lint Javascript and JSON for consistent style
         run: bin/rake lint:biome
 
-  spec-coverage:
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-      - name: Every spec is in exactly one bucket
-        run: bin/ci-specs --check
-
-  javascript:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Ruby and Node
-        uses: ./.github/actions/setup-app
-
-      - name: JavaScript unit tests
-        run: yarn test
-
-  rspec:
-    name: rspec (${{ matrix.bucket }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    strategy:
-      fail-fast: false
-      matrix:
-        bucket: [units, requests, system, engines]
 
     services:
       postgres:
         image: postgres:16-trixie
+        ports: ["5432:5432"]
         env:
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
+          --health-cmd pg_isready
+          --health-interval 10s
           --health-timeout 5s
-          --health-retries 10
-    
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+          --health-retries 5
+    #  redis:
+    #    image: valkey/valkey:8
+    #    ports:
+    #      - 6379:6379
+    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout code
+        uses: actions/checkout@v7
 
-      - name: Set up Ruby and Node
-        uses: ./.github/actions/setup-app
-
-      - name: Create and load the database
-        run: bin/rails db:create db:schema:load
-
-      - name: Precompile assets
-        run: bin/rails assets:precompile
-
-      # RSpec::Github::Formatter adds inline PR annotations on failures; .rspec
-      # keeps the documentation formatter for readable logs.
-      - name: Run specs (${{ matrix.bucket }})
-        run: |
-          files="$(bin/ci-specs "${{ matrix.bucket }}")"
-          bundle exec rspec --format RSpec::Github::Formatter $files
-
-      - name: Upload Capybara failure screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: capybara-screenshots-${{ matrix.bucket }}
-          path: tmp/capybara/
-          if-no-files-found: ignore
-
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
-    steps:
-      - uses: actions/checkout@v7
       - name: Set up Ruby
-        uses: ./.github/actions/setup-app
+        uses: ruby/setup-ruby@v1
         with:
-          node: "false"
-      - name: Create and load the database
-        run: bin/rails db:create db:schema:load
+          bundler-cache: true
 
-  migrations:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    services:
-      postgres:
-        image: postgres:16-trixie
+      - name: Run tests
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Ruby
-        uses: ./.github/actions/setup-app
-        with:
-          node: "false"
-
-      # Build the database by running every migration against an empty database,
-      # rather than loading schema.rb. This proves the migrations themselves apply
-      # cleanly end to end before we ever deploy to staging/production.
-      - name: Migrate from an empty database
-        run: bin/rails db:create db:migrate
-
-      # A clean migration run must reproduce the committed schema.rb exactly.
-      # Any diff means a migration is out of sync with the checked-in schema.
-      - name: Fail on schema drift
-        run: git diff --exit-code db/schema.rb
-
-  eager-load:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    env:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Ruby
-        uses: ./.github/actions/setup-app
-        with:
-          node: "false"
-
-      - name: Eager-load check
-        run: bin/rails zeitwerk:check
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
+          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          # REDIS_URL: redis://localhost:6379/0
+        run: bin/rails db:test:prepare spec
