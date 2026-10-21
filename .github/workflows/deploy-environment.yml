@@ -1,0 +1,194 @@
+---
+name: deploy-environment
+
+on:
+  workflow_call:
+    inputs:
+      environment-name:
+        type: string
+        required: true
+      ref:
+        type: string
+        default: ""
+
+concurrency:
+  group: ${{ inputs.environment-name }}
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  # Account IDs aren't secret, so embedding this avoids needing repo-admin to
+  # manage an environment secret. The OIDC role trust still scopes to this repo.
+  AWS_ACCOUNT_ID: "063570950861"
+  AWS_REGION: eu-west-2
+  APP_NAME: dlp
+  CONTAINER_NAME: dlp
+
+jobs:
+  build-image:
+    name: Build & push image (${{ inputs.environment-name }})
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment-name }}
+    outputs:
+      image: ${{ steps.image.outputs.uri }}
+    steps:
+      - uses: actions/checkout@7
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Short SHA
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD | cut -c1-7)" >>"$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2
+
+      - name: Expose GitHub Actions cache to Docker
+        uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Image URI
+        id: image
+        run: echo "uri=${{ steps.ecr.outputs.registry }}/${{ env.APP_NAME }}/${{ inputs.environment-name }}:${{ steps.sha.outputs.sha }}" >>"$GITHUB_OUTPUT"
+
+      - name: Build, tag & push
+        env:
+          REPO: ${{ steps.ecr.outputs.registry }}/${{ env.APP_NAME }}/${{ inputs.environment-name }}
+          TAG: ${{ steps.sha.outputs.sha }}
+        run: |
+          DOCKER_BUILDKIT=1 docker buildx build \
+            --cache-to type=gha,mode=max \
+            --cache-from type=gha \
+            --no-cache-filter runtime \
+            --push \
+            --build-arg REVISION=$TAG \
+            -t $REPO:$TAG \
+            -t $REPO:latest \
+            -f Dockerfile.production .
+
+  sync-assets:
+    name: Compile and sync assets to S3 bucket
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment-name }}
+
+    steps:
+      - uses: actions/checkout@7
+
+      - name: Set up Ruby and Node
+        uses: ./.github/actions/setup-app
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Compile assets
+        env:
+          SECRET_KEY_BASE_DUMMY: "1"
+          ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: "dummy"
+          ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: "dummy"
+          ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: "dummy"
+          DATABASE_URL: "postgres://localhost:5432/dummy"
+        run: |
+          bin/rails assets:precompile
+
+      - name: Sync assets to S3 bucket
+        run: |
+          aws s3 sync public/assets s3://${{ env.APP_NAME }}-${{ inputs.environment-name }}-assets-${{ env.AWS_ACCOUNT_ID }}-${{ env.AWS_REGION }}-an/assets --size-only
+
+  db-migrate:
+    name: Migrate database (${{ inputs.environment-name }})
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment-name }}
+    needs: build-image
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Run db:prepare as a one-off task on the new image
+        env:
+          CLUSTER: ${{ env.APP_NAME }}-${{ inputs.environment-name }}
+          WEB_FAMILY: ${{ env.APP_NAME }}-web-${{ inputs.environment-name }}
+          IMAGE: ${{ needs.build-image.outputs.image }}
+        run: |
+          set -euo pipefail
+          aws ecs describe-task-definition --task-definition "$WEB_FAMILY" --query taskDefinition \
+            | jq --arg IMG "$IMAGE" '
+                .containerDefinitions |= map(if .name=="'"$CONTAINER_NAME"'" then .image=$IMG else . end)
+                | del(.compatibilities,.taskDefinitionArn,.requiresAttributes,.revision,.status,.registeredAt,.registeredBy)
+              ' > taskdef.json
+          TD_ARN=$(aws ecs register-task-definition --cli-input-json file://taskdef.json --query 'taskDefinition.taskDefinitionArn' --output text)
+          NETCFG=$(aws ecs describe-services --cluster "$CLUSTER" --services "$WEB_FAMILY" \
+            --query 'services[0].networkConfiguration' --output json)
+          TASK_ARN=$(aws ecs run-task --cluster "$CLUSTER" --task-definition "$TD_ARN" \
+            --launch-type FARGATE --network-configuration "$NETCFG" \
+            --overrides '{"containerOverrides":[{"name":"'"$CONTAINER_NAME"'","command":["bin/rails","db:prepare"]}]}' \
+            --query 'tasks[0].taskArn' --output text)
+          echo "Migration task: $TASK_ARN"
+          aws ecs wait tasks-stopped --cluster "$CLUSTER" --tasks "$TASK_ARN"
+          EXIT=$(aws ecs describe-tasks --cluster "$CLUSTER" --tasks "$TASK_ARN" \
+            --query 'tasks[0].containers[?name==`'"$CONTAINER_NAME"'`].exitCode | [0]' --output text)
+          echo "Migration exit code: $EXIT"
+          test "$EXIT" = "0"
+
+  deploy:
+    name: Deploy ${{ matrix.service }} (${{ inputs.environment-name }})
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment-name }}
+    needs: [build-image, sync-assets, db-migrate]
+    strategy:
+      matrix:
+        service: [worker, console, web]
+    steps:
+      - uses: actions/checkout@7
+        if: matrix.service == 'web'
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.APP_NAME }}_github_deploy_${{ inputs.environment-name }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Download & re-render task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.APP_NAME }}-${{ matrix.service }}-${{ inputs.environment-name }} \
+            --query taskDefinition \
+            | jq -r 'del(.compatibilities,.taskDefinitionArn,.requiresAttributes,.revision,.status,.registeredAt,.registeredBy)' \
+            > ${{ matrix.service }}.json
+
+      - name: Render new image into task definition
+        id: taskdef
+        uses: aws-actions/amazon-ecs-render-task-definition@8d79160660ad39c402a16e5fc7cd2a32e8f7d6b7 # v1
+        with:
+          task-definition: ${{ matrix.service }}.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ needs.build-image.outputs.image }}
+
+      - name: Deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@a00d4d57ac0de1a99b39fe469f3d898d38717c2b # v2
+        with:
+          task-definition: ${{ steps.taskdef.outputs.task-definition }}
+          service: ${{ env.APP_NAME }}-${{ matrix.service }}-${{ inputs.environment-name }}
+          cluster: ${{ env.APP_NAME }}-${{ inputs.environment-name }}
+          wait-for-service-stability: true
+          codedeploy-appspec: ${{ matrix.service == 'web' && '.aws/appspec.yml' || '' }}
+          codedeploy-application: ${{ matrix.service == 'web' && format('{0}-{1}', env.APP_NAME, inputs.environment-name) || '' }}
+          codedeploy-deployment-group: ${{ matrix.service == 'web' && 'default' || '' }}

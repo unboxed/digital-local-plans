@@ -1,0 +1,19 @@
+---
+name: Deploy to staging
+
+# Deploys main only once the CI workflow has passed for that push.
+# workflow_dispatch is kept for manual re-deploys.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    uses: ./.github/workflows/deploy-environment.yml
+    with:
+      environment-name: "staging"
+      ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
