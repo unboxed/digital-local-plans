@@ -75,7 +75,7 @@ jobs:
             --build-arg REVISION=$TAG \
             -t $REPO:$TAG \
             -t $REPO:latest \
-            -f Dockerfile.production .
+            -f Dockerfile .
 
   sync-assets:
     name: Compile and sync assets to S3 bucket
