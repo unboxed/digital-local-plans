@@ -4,10 +4,10 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-full">
         <div class="app-page-header__title-row">
-          <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Create timetable</h1>
+          <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Enter dates for your timetable</h1>
           <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
         </div>
-        <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
+        <p class="govuk-body govuk-hint">The process of creating a local plan from commencement to adoption should take no longer than 30 months.</p>
 
         <% if @plan_duration %>
           <div class="app-duration-ribbon govuk-body-s govuk-!-font-weight-bold">Your timetable is currently <%= @plan_duration %> months from commencement to adoption</div>
