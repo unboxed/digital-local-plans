@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Timetables
-  class CreateTimetableWithEvents < ApplicationService
+  class InitializeTimetableWithEvents < ApplicationService
     def initialize(timetable:, form:)
       @timetable = timetable
       @form = form

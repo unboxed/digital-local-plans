@@ -33,7 +33,7 @@ class TimetablesController < ApplicationController
     @timetable = Timetable.new(organisation: current_organisation)
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
-    if Timetables::CreateTimetableWithEvents.call(timetable: @timetable, form: @form)
+    if Timetables::InitializeTimetableWithEvents.call(timetable: @timetable, form: @form)
       redirect_to home_path
     else
       render :new, status: :unprocessable_content
