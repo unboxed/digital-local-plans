@@ -2,16 +2,18 @@
 
 class TimetablesController < ApplicationController
   before_action :set_timetable, only: %i[show edit update]
+  before_action :redirect_if_timetable_exists, only: %i[new create]
 
   STATUSES = {
     "draft" => {text: "In progress", colour: "blue"}
   }.freeze
 
   def index
-    timetable = current_organisation.current_timetable ||
-      Timetables::InitializeTimetableWithEvents.call(organisation: current_user.organisation)
-
-    redirect_to timetable_path(timetable)
+    if timetable = current_organisation.current_timetable
+      redirect_to timetable_path(timetable)
+    else
+      redirect_to new_timetable_path
+    end
   end
 
   def new
@@ -31,8 +33,8 @@ class TimetablesController < ApplicationController
     @timetable = Timetable.new(organisation: current_organisation)
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
-    if @form.save(@timetable)
-      redirect_to @timetable
+    if Timetables::CreateTimetableWithEvents.call(timetable: @timetable, form: @form)
+      redirect_to home_path
     else
       render :new, status: :unprocessable_content
     end
@@ -42,7 +44,7 @@ class TimetablesController < ApplicationController
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
     if @form.save(@timetable)
-      redirect_to @timetable
+      redirect_to home_path
     else
       render :edit, status: :unprocessable_content
     end
@@ -58,10 +60,14 @@ class TimetablesController < ApplicationController
     @timetable = current_organisation.timetables.find(params[:id])
   end
 
+  def redirect_if_timetable_exists
+    timetable = current_organisation.current_timetable
+    redirect_to timetable_path(timetable) if timetable
+  end
+
   def timetable_metadata_params
-    params.expect(timetable_metadata_form: 
+    params.expect(timetable_metadata_form:
       [:reference, :name, :description, :period_start_year, :period_end_year,
-      :documentation_url, :document_url, :notes]
-    )
+        :documentation_url, :document_url, :notes])
   end
 end
