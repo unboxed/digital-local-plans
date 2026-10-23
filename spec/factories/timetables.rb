@@ -17,7 +17,7 @@ FactoryBot.define do
     reference { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
     required_housing { Faker::Number.between(from: 500, to: 10_000) }
 
-    trait :with_required_events do
+      trait :with_required_events do
       after(:create) do |timetable|
         TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each_key do |event_key|
           timetable.timetable_events.create!(
