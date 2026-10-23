@@ -1,31 +1,28 @@
 # frozen_string_literal: true
 
 module Timetables
-  class InitializeTimetableWithEvents < ApplicationService
-    def initialize(organisation:)
-      @organisation = organisation
+  class CreateTimetableWithEvents < ApplicationService
+    def initialize(timetable:, form:)
+      @timetable = timetable
+      @form = form
     end
 
     def call
-      timetable = @organisation.timetables.build(status: :draft)
-
       Timetable.transaction do
-        timetable.save!
-        build_required_events(timetable)
-      end
+        raise ActiveRecord::Rollback unless @form.save(@timetable)
 
-      timetable
-    rescue ActiveRecord::RecordInvalid
-      timetable
+        build_required_events
+        true
+      end || false
     end
 
     private
 
-    def build_required_events(timetable)
+    def build_required_events
       TimetableEvent::REQUIRED_TIMETABLE_EVENTS.each_key do |event_key|
-        timetable.timetable_events.create!(
+        @timetable.timetable_events.create!(
           plan_event: event_key,
-          plan: timetable.reference,
+          plan: @timetable.reference,
           status: :draft
         )
       end
