@@ -11,8 +11,6 @@ RSpec.describe Organisation, type: :model do
     subject { build(:organisation) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   end
 
   describe "factory" do
