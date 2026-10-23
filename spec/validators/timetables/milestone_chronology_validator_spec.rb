@@ -13,7 +13,7 @@ RSpec.describe Timetables::MilestoneChronologyValidator, type: :validator do
       it "adds an error" do
         described_class.new.validate(timetable)
 
-        expect(timetable.errors).to contain_exactly("End scoping consultation cannot be before Start scoping consultation")
+        expect(timetable.errors).to contain_exactly("End scoping consultation cannot come before Start scoping consultation")
       end
     end
 

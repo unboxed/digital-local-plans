@@ -3,34 +3,34 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <div class="app-page-header">
-      <div class="app-page-header__title-row govuk-!-margin-bottom-3">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Add or change plan milestones</h1>
-        <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
-      </div>
-      <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
-    </div>
-
-    <h2 class="govuk-heading-m"><%= @event_name %></h2>
-
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
+
+      <div class="app-page-header">
+        <div class="app-page-header__title-row govuk-!-margin-bottom-3">
+          <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Add or change plan milestones</h1>
+          <%= govuk_tag(text: @status[:text], colour: @status[:colour]) %>
+        </div>
+        <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
+      </div>
+
+      <h2 class="govuk-heading-m"><%= @event_name %></h2>
 
       <div class="app-container-outline">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
-            <%= render 'form', f: f, timetable_event: @timetable_event %>
+            <%= render "form", f: f, timetable_event: @timetable_event %>
           </div>
         </div>
       </div>
 
-
-      <div class="govuk-!-margin-top-6">
-      <%= f.govuk_submit 'Save' do %>
+      <div class="govuk-!-margin-top-6 govuk-button-group">
         <% if @event_form.warnings.any? %>
-          <%= f.govuk_submit "Save anyway", name: "edit_timetable_event_form[warnings_confirmed]", value: "true", secondary: true %>
+          <%= f.govuk_submit "Save anyway", name: "edit_timetable_event_form[warnings_confirmed]", value: "true" %>
+        <% else %>
+          <%= f.govuk_submit "Save" %>
         <% end %>
-      <% end %>
+        <%= govuk_link_to "Cancel", timetables_path(@timetable_event.timetable) %>
       </div>
     <% end %>
   </div>

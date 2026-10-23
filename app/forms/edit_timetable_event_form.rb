@@ -42,7 +42,10 @@ class EditTimetableEventForm
       timetable.errors.where(:base).each do |error|
         errors.add(:base, error.message) if relevant_to?(event, error.options)
       end
-      @warnings = timetable.warnings.select { |warning| relevant_to?(event, warning.to_h) }.map(&:message)
+
+      if timetable.errors.empty?
+        @warnings = timetable.warnings.select { |warning| relevant_to?(event, warning.to_h) }.map(&:message)
+      end
 
       raise ActiveRecord::Rollback if blocked?
     end
