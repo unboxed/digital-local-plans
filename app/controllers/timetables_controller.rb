@@ -16,6 +16,7 @@ class TimetablesController < ApplicationController
 
   def show
     @status = status
+    @plan_duration = plan_duration
   end
 
   private
