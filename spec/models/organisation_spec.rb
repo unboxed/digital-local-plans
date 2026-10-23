@@ -24,13 +24,19 @@ RSpec.describe Organisation, type: :model do
   describe "#current_timetable" do
     let(:organisation) { create(:organisation) }
 
-    let!(:previous_timetable) { create(:timetable, organisation:, period_end_date: 2.years.ago) }
-    let!(:near_future_timetable) { create(:timetable, organisation:, period_end_date: 5.years.from_now) }
-    let!(:distant_future_timetable) { create(:timetable, organisation:, period_end_date: 10.years.from_now) }
+    let!(:previous_timetable) do
+      create(:timetable, organisation:, period_start_year: 17.years.ago.year, period_end_year: 2.years.ago.year)
+    end
+    let!(:near_future_timetable) do
+      create(:timetable, organisation:, period_start_year: Date.current.year, period_end_year: 5.years.from_now.year)
+    end
+    let!(:distant_future_timetable) do
+      create(:timetable, organisation:, period_start_year: Date.current.year, period_end_year: 10.years.from_now.year)
+    end
 
     subject(:current_timetable) { organisation.current_timetable }
 
-    # it "returns the nearest timetable whose period_end_date is in the future" do
+    # it "returns the nearest timetable whose period_end_year is this year or later" do
     #   expect(current_timetable).to eq(near_future_timetable)
     # end
 

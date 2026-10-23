@@ -22,27 +22,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125414) do
     t.index ["email"], name: "index_organisations_on_email", unique: true
   end
 
-  create_table "plans", force: :cascade do |t|
-    t.bigint "organisation_id", null: false
-    t.string "name"
-    t.string "reference"
-    t.string "dataset"
-    t.text "description"
-    t.text "notes"
-    t.string "status", default: "draft", null: false
-    t.string "document_url"
-    t.string "documentation_url"
-    t.string "local_planning_authorities"
-    t.integer "required_housing"
-    t.date "entry_date"
-    t.integer "period_start_date"
-    t.integer "period_end_date"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["organisation_id"], name: "index_plans_on_organisation_id"
-    t.index ["status"], name: "index_plans_on_status"
-  end
-
   create_table "timetable_events", force: :cascade do |t|
     t.bigint "timetable_id", null: false
     t.string "reference"
@@ -74,11 +53,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125414) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status", default: "draft", null: false
-    t.bigint "plan_id", null: false
     t.integer "period_start_year"
     t.integer "period_end_year"
     t.index ["organisation_id"], name: "index_timetables_on_organisation_id"
-    t.index ["plan_id"], name: "index_timetables_on_plan_id", unique: true
     t.index ["status"], name: "index_timetables_on_status"
   end
 
@@ -98,9 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125414) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "plans", "organisations"
   add_foreign_key "timetable_events", "timetables"
   add_foreign_key "timetables", "organisations"
-  add_foreign_key "timetables", "plans"
   add_foreign_key "users", "organisations"
 end
