@@ -1,0 +1,58 @@
+<%= content_for :page_title, "Enter details for your plan" %>
+<%= content_for :before_content, govuk_back_link_to(@timetable) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="app-page-header">
+      <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Enter details for your plan</h1>
+      </div>
+    </div>
+
+    <%= form_with model: @form, url: timetable_path(@timetable), method: :patch do |f| %>
+      <%= f.govuk_error_summary %>
+
+      <div class="app-container-outline">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= f.govuk_text_field :reference,
+                  label: { text: "Reference", size: "m" },
+                  hint: { text: "Give each plan a unique reference. For example: 'LP-BRX-2024' or 'barnet-local-plan-2021-2036'" } %>
+
+            <%= f.govuk_text_field :name,
+                  label: { text: "Name", size: "m" },
+                  hint: { text: "Use the title of the plan. For example: 'York Local Plan'" } %>
+
+            <%= f.govuk_text_area :description,
+                  label: { text: "Description", size: "m" },
+                  hint: { text: "Enter a short description of the matters that the plan is to deal with." } %>
+
+            <%= f.govuk_text_field :period_start_year,
+                  label: { text: "Plan period start year", size: "m" },
+                  hint: { text: "For example, 2024" },
+                  width: 4, inputmode: "numeric", spellcheck: false %>
+
+            <%= f.govuk_text_field :period_end_year,
+                  label: { text: "Plan period end year", size: "m" },
+                  hint: { text: "For example, 2040" },
+                  width: 4, inputmode: "numeric", spellcheck: false %>
+
+            <%= f.govuk_text_field :documentation_url,
+                  label: { text: "Documentation URL", size: "m" },
+                  hint: { text: "Enter the URL of the webpage which links to your main or core plan document." } %>
+
+            <%= f.govuk_text_field :document_url,
+                  label: { text: "Document URL", size: "m" },
+                  hint: { text: "Enter the URL for the relevant plan document, which is usually a hosted PDF file." } %>
+
+            <%= f.govuk_text_area :notes,
+                  label: { text: "Notes", size: "m" },
+                  hint: { text: "You may provide notes on how you made this data to help users differentiate the plan from others with a similar name. For example, Barnsley’s Local Plan as adopted by Full Council on 3 January 2019." } %>
+          </div>
+        </div>
+      </div>
+
+      <%= f.govuk_submit "Continue" %>
+    <% end %>
+  </div>
+</div>
