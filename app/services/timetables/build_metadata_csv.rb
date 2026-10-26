@@ -39,7 +39,7 @@ module Timetables
           @timetable.document_url,
           @timetable.required_housing,
           @timetable.entry_date,
-          @timetable.notes,
+          @timetable.notes
         ]
       end
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Timetable < ApplicationRecord  
+class Timetable < ApplicationRecord
   before_validation { warnings.clear }
   before_validation :set_default_dataset
 

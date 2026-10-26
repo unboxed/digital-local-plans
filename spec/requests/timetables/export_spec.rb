@@ -37,7 +37,7 @@ RSpec.describe "Timetables::Export", type: :request do
       get timetable_timetable_exports_path(timetable)
 
       filename_prefix = "timetable-LP-2050-#{Date.current.iso8601}"
-      expected_data_csv     = Timetables::BuildTimetableCsv.call(timetable)
+      expected_data_csv = Timetables::BuildTimetableCsv.call(timetable)
       expected_metadata_csv = Timetables::BuildMetadataCsv.call(timetable)
 
       zip_entries = {}
