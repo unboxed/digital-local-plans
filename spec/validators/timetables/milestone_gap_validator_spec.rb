@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
   let(:timetable) { create(:timetable, :with_required_events) }  
-  let(:error_message) { "There needs to be at least 21 days between Start Scoping Consultation and End Scoping Consultation" }
+  let(:error_message) { "Start Scoping Consultation should come at least 21 days after End Scoping Consultation" }
 
   describe "#validate" do
     context "when the gap is shorter than required" do

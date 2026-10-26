@@ -78,7 +78,7 @@ RSpec.describe Timetable, type: :model do
 
   describe "milestone gap validation" do
     let(:message) { "Start Scoping Consultation should come at least 21 days after End Scoping Consultation" }
-    let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) }
+    let(:timetable) { create(:timetable, :with_required_events) }
 
     before do
       timetable.timetable_events.find_by!(plan_event: "scoping-consultation-start").update!(event_date: Date.new(2030, 11, 1))
