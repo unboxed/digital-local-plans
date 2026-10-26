@@ -9,7 +9,7 @@ class TimetablesController < ApplicationController
   }.freeze
 
   def index
-    if timetable = current_organisation.current_timetable
+    if (timetable = current_organisation.current_timetable)
       redirect_to timetable_path(timetable)
     else
       redirect_to new_timetable_path
