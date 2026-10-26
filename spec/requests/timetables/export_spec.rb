@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "zip"
 
 RSpec.describe "Timetables::Export", type: :request do
   let(:organisation) { create(:organisation) }
@@ -19,23 +20,39 @@ RSpec.describe "Timetables::Export", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns CSV content type" do
+    it "returns zip content type" do
       get timetable_timetable_exports_path(timetable)
 
-      expect(response.content_type).to eq("text/csv")
+      expect(response.media_type).to eq("application/zip")
     end
 
-    it "sets the expected filename" do
+    it "sets the expected zip filename" do
       get timetable_timetable_exports_path(timetable)
 
       expect(response.headers["Content-Disposition"])
-        .to include("timetable-LP-2050-#{Date.current.iso8601}.csv")
+        .to include("filename=\"timetable-LP-2050-#{Date.current.iso8601}.zip\"")
     end
 
-    it "returns the generated CSV data" do
+    it "contains both data and metadata CSVs in the zip file" do
       get timetable_timetable_exports_path(timetable)
 
-      expect(response.body).to eq(Timetables::BuildTimetableCsv.call(timetable))
+      filename_prefix = "timetable-LP-2050-#{Date.current.iso8601}"
+      expected_data_csv     = Timetables::BuildTimetableCsv.call(timetable)
+      expected_metadata_csv = Timetables::BuildMetadataCsv.call(timetable)
+
+      zip_entries = {}
+      Zip::InputStream.open(StringIO.new(response.body)) do |io|
+        while (entry = io.get_next_entry)
+          zip_entries[entry.name] = io.read
+        end
+      end
+
+      expect(zip_entries.keys).to contain_exactly(
+        "#{filename_prefix}-data.csv",
+        "#{filename_prefix}-metadata.csv"
+      )
+      expect(zip_entries["#{filename_prefix}-data.csv"]).to eq(expected_data_csv)
+      expect(zip_entries["#{filename_prefix}-metadata.csv"]).to eq(expected_metadata_csv)
     end
   end
 end
