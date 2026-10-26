@@ -1,0 +1,8 @@
+<p class="govuk-body">
+  <% if milestone.dated? %>
+    You entered <strong><%= milestone.event_date.strftime("%-d %B %Y") %></strong>
+    as the planned date for <%= milestone.name %>.
+  <% else %>
+    You have not yet entered a planned date for <%= milestone.name %>.
+  <% end %>
+</p>
