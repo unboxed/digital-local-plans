@@ -6,7 +6,17 @@ class ApplicationController < ActionController::Base
 
   include ApplicationHelper
 
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   def current_organisation
     current_user&.organisation
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [
+      organisation_attributes: [:name]
+    ])
   end
 end
