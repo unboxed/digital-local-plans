@@ -35,7 +35,7 @@ RSpec.describe "Timetables::Export", type: :request do
     it "returns the generated CSV data" do
       get timetable_timetable_exports_path(timetable)
 
-      expect(response.body).to eq(Timetables::BuildCsv.call(timetable))
+      expect(response.body).to eq(Timetables::BuildTimetableCsv.call(timetable))
     end
   end
 end

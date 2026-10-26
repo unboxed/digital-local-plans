@@ -2,10 +2,10 @@
 
 require "rails_helper"
 
-RSpec.describe Timetables::BuildCsv, type: :service do
+RSpec.describe Timetables::BuildTimetableCsv, type: :service do
   let(:timetable) { create(:timetable, name: "City of London Plan") }
 
-  subject(:build_csv) { described_class.call(timetable) }
+  subject(:build_timetable_csv) { described_class.call(timetable) }
 
   let!(:event_1) do
     create(
@@ -23,7 +23,7 @@ RSpec.describe Timetables::BuildCsv, type: :service do
 
   describe "#call" do
     it "returns CSV string with headers and event rows" do
-      csv = CSV.parse(build_csv)
+      csv = CSV.parse(build_timetable_csv)
 
       expect(csv[0]).to eq(%w[
         reference

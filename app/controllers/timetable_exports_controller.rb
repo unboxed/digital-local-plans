@@ -4,7 +4,7 @@ class TimetableExportsController < ApplicationController
   before_action :set_timetable
 
   def show
-    csv_data = Timetables::BuildCsv.call(@timetable)
+    csv_data = Timetables::BuildTimetableCsv.call(@timetable)
 
     send_data csv_data,
       filename: "timetable-#{@timetable.reference}-#{Date.current.iso8601}.csv",
