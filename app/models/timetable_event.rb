@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TimetableEvent < ApplicationRecord
+  before_validation :set_reference
   before_save :set_entry_date, unless: :new_record?
 
   belongs_to :timetable
@@ -25,11 +26,21 @@ class TimetableEvent < ApplicationRecord
     REQUIRED_TIMETABLE_EVENTS.dig(plan_event, "name")
   end
 
+  def event_reference
+    REQUIRED_TIMETABLE_EVENTS.dig(plan_event, "reference")
+  end
+
   def timing_description
     REQUIRED_TIMETABLE_EVENTS.dig(plan_event, "timing_description")
   end
 
   def set_entry_date
     self.entry_date = Date.current if (changed - ["entry_date"]).any?
+  end
+
+  def set_reference
+    return if timetable&.reference.blank?
+
+    self.reference = "#{timetable.reference}-#{event_reference}"
   end
 end
