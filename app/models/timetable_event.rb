@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TimetableEvent < ApplicationRecord
-  before_validation :set_reference
+  after_initialize :prefill_reference, if: :new_record?  
   before_save :set_entry_date, unless: :new_record?
 
   belongs_to :timetable
@@ -38,7 +38,7 @@ class TimetableEvent < ApplicationRecord
     self.entry_date = Date.current if (changed - ["entry_date"]).any?
   end
 
-  def set_reference
+  def prefill_reference
     return if timetable&.reference.blank?
 
     self.reference = "#{timetable.reference}-#{event_reference}"
