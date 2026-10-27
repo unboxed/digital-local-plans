@@ -18,8 +18,8 @@ RSpec.describe Timetable, type: :model do
       it { is_expected.not_to validate_presence_of(:local_planning_authorities) }
       it { is_expected.not_to validate_presence_of(:dataset) }
       it { is_expected.not_to validate_presence_of(:description) }
-      it { is_expected.not_to validate_presence_of(:period_start_date) }
-      it { is_expected.not_to validate_presence_of(:period_end_date) }
+      it { is_expected.not_to validate_presence_of(:period_start_year) }
+      it { is_expected.not_to validate_presence_of(:period_end_year) }
       it { is_expected.not_to validate_presence_of(:documentation_url) }
       it { is_expected.not_to validate_presence_of(:document_url) }
       it { is_expected.not_to validate_presence_of(:entry_date) }
@@ -34,8 +34,8 @@ RSpec.describe Timetable, type: :model do
       it { is_expected.to validate_presence_of(:local_planning_authorities) }
       it { is_expected.to validate_presence_of(:dataset) }
       it { is_expected.to validate_presence_of(:description) }
-      it { is_expected.to validate_presence_of(:period_start_date) }
-      it { is_expected.to validate_presence_of(:period_end_date) }
+      it { is_expected.to validate_presence_of(:period_start_year) }
+      it { is_expected.to validate_presence_of(:period_end_year) }
       it { is_expected.to validate_presence_of(:documentation_url) }
       it { is_expected.to validate_presence_of(:document_url) }
       it { is_expected.to validate_presence_of(:entry_date) }
@@ -55,13 +55,19 @@ RSpec.describe Timetable, type: :model do
   describe ".upcoming" do
     let(:organisation) { create(:organisation) }
 
-    let!(:past_timetable) { create(:timetable, organisation: organisation, period_end_date: 2.years.ago) }
-    let!(:near_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 5.years.from_now) }
-    let!(:distant_future_timetable) { create(:timetable, organisation: organisation, period_end_date: 10.years.from_now) }
+    let!(:past_timetable) do
+      create(:timetable, organisation:, period_start_year: 17.years.ago.year, period_end_year: 2.years.ago.year)
+    end
+    let!(:near_future_timetable) do
+      create(:timetable, organisation:, period_start_year: Date.current.year, period_end_year: 5.years.from_now.year)
+    end
+    let!(:distant_future_timetable) do
+      create(:timetable, organisation:, period_start_year: Date.current.year, period_end_year: 10.years.from_now.year)
+    end
 
     subject(:upcoming_timetables) { described_class.upcoming }
 
-    it "returns timetables with a period_end_date in the future ordered by period_end_date" do
+    it "returns timetables with a period_end_year in the future ordered by period_end_year" do
       expect(upcoming_timetables).to eq([near_future_timetable, distant_future_timetable])
     end
 
@@ -72,7 +78,7 @@ RSpec.describe Timetable, type: :model do
 
   describe "milestone gap validation" do
     let(:message) { "Start Scoping Consultation should come at least 21 days after End Scoping Consultation" }
-    let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) }
+    let(:timetable) { create(:timetable, :with_required_events) }
 
     before do
       timetable.timetable_events.find_by!(plan_event: "scoping-consultation-start").update!(event_date: Date.new(2030, 11, 1))

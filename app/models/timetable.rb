@@ -20,12 +20,12 @@ class Timetable < ApplicationRecord
 
   with_options unless: :draft? do
     validates :name, :local_planning_authorities, :dataset, :description,
-      :period_start_date, :period_end_date, :documentation_url,
+      :period_start_year, :period_end_year, :documentation_url,
       :document_url, :entry_date, :required_housing, :reference,
       presence: true
   end
 
-  scope :upcoming, -> { where("period_end_date > ?", Date.current).order(:period_end_date) }
+  scope :upcoming, -> { where(period_end_year: Date.current.year..).order(:period_end_year) }
 
   def warnings
     @warnings ||= []

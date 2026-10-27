@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Timetables::MilestoneGapValidator, type: :validator do
-  let(:timetable) { Timetables::InitializeTimetableWithEvents.call(organisation: create(:organisation)) } # TODO: add events to factory
+  let(:timetable) { create(:timetable, :with_required_events) }
   let(:error_message) { "Start Scoping Consultation should come at least 21 days after End Scoping Consultation" }
 
   describe "#validate" do
