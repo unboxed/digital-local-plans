@@ -329,6 +329,7 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
+    rubyzip (3.7.0)
     securerandom (0.4.1)
     shoulda-matchers (8.0.1)
       activesupport (>= 7.2)
@@ -406,6 +407,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 8.1.4)
   rspec-rails (~> 8.0.0)
+  rubyzip
   shoulda-matchers
   standard (~> 1.57)
   standard-custom

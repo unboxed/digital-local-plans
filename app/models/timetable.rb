@@ -2,6 +2,7 @@
 
 class Timetable < ApplicationRecord
   before_validation { warnings.clear }
+  before_validation :set_default_dataset
 
   belongs_to :organisation
   has_many :timetable_events, dependent: :destroy
@@ -29,5 +30,9 @@ class Timetable < ApplicationRecord
 
   def warnings
     @warnings ||= []
+  end
+
+  def set_default_dataset
+    self.dataset = "local-plan"
   end
 end

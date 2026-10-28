@@ -32,7 +32,6 @@ RSpec.describe Timetable, type: :model do
 
       it { is_expected.to validate_presence_of(:name) }
       it { is_expected.to validate_presence_of(:local_planning_authorities) }
-      it { is_expected.to validate_presence_of(:dataset) }
       it { is_expected.to validate_presence_of(:description) }
       it { is_expected.to validate_presence_of(:period_start_year) }
       it { is_expected.to validate_presence_of(:period_end_year) }

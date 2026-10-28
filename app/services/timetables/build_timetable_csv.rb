@@ -3,7 +3,7 @@
 require "csv"
 
 module Timetables
-  class BuildCsv < ApplicationService
+  class BuildTimetableCsv < ApplicationService
     HEADERS = %w[
       reference
       plan
