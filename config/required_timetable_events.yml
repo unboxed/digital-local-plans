@@ -1,36 +1,48 @@
 public-notice-intention-commence:
   name: Publish notice of intention to commence
+  reference: notice
   timing_description: Must be published at least 4 months before Gateway 1
 scoping-consultation-start:
   name: Start scoping consultation
+  reference: start-scoping
   timing_description: Must run for at least 21 days
 scoping-consultation-end:
   name: End scoping consultation
+  reference: end-scoping
   timing_description: Must be at least 21 days after the scoping consultation start
 gateway-1-self-assessment:
   name: "Self-assessment for gateway 1"
+  reference: gateway-1
   timing_description: Marks formal commencement of the 30-month timeframe
 plan-content-evidence-consultation-start:
   name: Start consultation on proposed content and evidence for local plan
+  reference: content-evidence-consult-start
   timing_description: Must run for at least 6 weeks
 plan-content-evidence-consultation-end:
   name: End consultation on proposed content and evidence for local plan
+  reference: content-evidence-consult-end
   timing_description: Must be at least 6 weeks after the consultation start date
 gateway-2-advice-sought:
   name: "Gateway 2: advice sought"
+  reference: gateway-2
   timing_description: Should take place between the content and proposed plan consultations
 proposed-plan-consultation-start:
   name: Consultation on proposed local plan starts
+  reference: proposed-plan-consult-start
   timing_description: Must run for at least 8 weeks
 proposed-plan-consultation-end:
   name: Consultation on proposed local plan ends
+  reference: proposed-plan-consult-end
   timing_description: Must be at least 8 weeks after the proposed plan consultation start date
 gateway-3-advice-sought:
   name: "Gateway 3: advice sought"
+  reference: gateway-3
   timing_description: Takes place after the proposed plan consultation closes, before submission
 examination-submitted:
   name: Plan submitted for examination
+  reference: exam-submit
   timing_description: Typically around 24 months after commencement (Gateway 1)
 adopted:
   name: Plan adopted
+  reference: adopted
   timing_description: Typically around 5-6 months after examination submission

@@ -11,6 +11,7 @@ class TimetableEventsController < ApplicationController
   def edit
     @event_form = EditTimetableEventForm.build_from_event(@timetable_event)
     @status = status
+    @milestones = [@timetable_event.previous_milestone, @timetable_event.next_milestone].compact
   end
 
   def update

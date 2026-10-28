@@ -102,4 +102,110 @@ RSpec.describe TimetableEvent, type: :model do
       end
     end
   end
+
+  describe "adjacent milestones" do
+    let(:timetable) { create(:timetable) }
+    let(:keys) { TimetableEvent::REQUIRED_TIMETABLE_EVENTS.keys }
+
+    def milestone_name(key)
+      TimetableEvent::REQUIRED_TIMETABLE_EVENTS.dig(key, "name")
+    end
+
+    def create_event(key, event_date: nil, on: timetable)
+      create(:timetable_event, timetable: on, plan_event: key, event_date: event_date)
+    end
+
+    context "when the event is in the middle of the list" do
+      let(:previous_key) { keys[4] }
+      let(:current_key) { keys[5] }
+      let(:next_key) { keys[6] }
+
+      it "returns the previous milestone with its planned date" do
+        create_event(previous_key, event_date: Date.new(2027, 1, 15))
+        event = create_event(current_key)
+
+        expect(event.previous_milestone).to have_attributes(
+          name: milestone_name(previous_key),
+          event_date: Date.new(2027, 1, 15),
+          dated?: true
+        )
+      end
+
+      it "returns the next milestone with its planned date" do
+        create_event(next_key, event_date: Date.new(2027, 6, 1))
+        event = create_event(current_key)
+
+        expect(event.next_milestone).to have_attributes(
+          name: milestone_name(next_key),
+          event_date: Date.new(2027, 6, 1),
+          dated?: true
+        )
+      end
+
+      it "returns an undated milestone when the neighbour has no planned date" do
+        create_event(next_key, event_date: nil)
+        event = create_event(current_key)
+
+        expect(event.next_milestone).to have_attributes(
+          name: milestone_name(next_key),
+          event_date: nil,
+          dated?: false
+        )
+      end
+
+      it "returns an undated milestone when the neighbour event does not exist" do
+        event = create_event(current_key)
+
+        expect(event.previous_milestone).to have_attributes(
+          name: milestone_name(previous_key),
+          event_date: nil,
+          dated?: false
+        )
+      end
+
+      it "ignores events belonging to another timetable" do
+        create_event(next_key, event_date: Date.new(2027, 6, 1), on: create(:timetable))
+        event = create_event(current_key)
+
+        expect(event.next_milestone.event_date).to be_nil
+      end
+    end
+
+    context "when the event is the first milestone" do
+      it "has no previous milestone" do
+        event = create_event(keys.first)
+
+        expect(event.previous_milestone).to be_nil
+      end
+
+      it "has a next milestone" do
+        event = create_event(keys.first)
+
+        expect(event.next_milestone.name).to eq(milestone_name(keys.second))
+      end
+    end
+
+    context "when the event is the last milestone" do
+      it "has no next milestone" do
+        event = create_event(keys.last)
+
+        expect(event.next_milestone).to be_nil
+      end
+
+      it "has a previous milestone" do
+        event = create_event(keys.last)
+
+        expect(event.previous_milestone.name).to eq(milestone_name(keys[-2]))
+      end
+    end
+
+    context "when the plan_event is not a known milestone" do
+      it "returns nil for both neighbours" do
+        event = build(:timetable_event, plan_event: "not-a-real-milestone")
+
+        expect(event.previous_milestone).to be_nil
+        expect(event.next_milestone).to be_nil
+      end
+    end
+  end
 end
