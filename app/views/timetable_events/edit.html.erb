@@ -11,18 +11,18 @@
       <p class="govuk-body govuk-hint">The whole process should take no longer than 30 months.</p>
     </div>
 
-    <h2 class="govuk-heading-m"><%= @event_name %></h2>
-
-    <% if @milestones.any? %>
-      <%= govuk_inset_text do %>
-        <% @milestones.each do |milestone| %>
-          <%= render "adjacent_milestone", milestone: %>
-        <% end %>
-      <% end %>
-    <% end %>
-
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
+
+      <h2 class="govuk-heading-m"><%= @event_name %></h2>
+
+      <% if @milestones.any? %>
+        <%= govuk_inset_text do %>
+          <% @milestones.each do |milestone| %>
+            <%= render "adjacent_milestone", milestone: %>
+          <% end %>
+        <% end %>
+      <% end %>
 
       <div class="app-container-outline">
         <div class="govuk-grid-row">

@@ -23,6 +23,7 @@ class TimetableEventsController < ApplicationController
     else
       flash.now[:warning] = ["Some dates do not meet requirements", @event_form.warnings.join(" ")] if @event_form.warnings.any?
       @status = status
+      @milestones = [@timetable_event.previous_milestone, @timetable_event.next_milestone].compact
       render :edit, status: :unprocessable_content
     end
   end
