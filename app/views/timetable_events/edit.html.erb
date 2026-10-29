@@ -24,8 +24,6 @@
     <%= form_with model: @event_form, url: timetable_event_path(@timetable_event), method: :patch do |f| %>
       <%= f.govuk_error_summary %>
 
-      <h2 class="govuk-heading-m"><%= @event_name %></h2>
-
       <div class="app-container-outline">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-half">
