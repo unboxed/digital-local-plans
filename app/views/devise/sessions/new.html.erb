@@ -1,26 +1,44 @@
-<h2 class="govuk-heading-m">Log in</h2>
+<%= content_for :page_title, "Sign in" %>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
-
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p class="govuk-body-s"><%= f.label :remember_me %></p>
-    </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
+<% if alert.present? && params[resource_name].present? %>
+  <% resource.errors.add(:email, alert) %>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="app-page-header">
+      <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Sign in</h1>
+      </div>
+    </div>
+
+    <%= form_with model: resource, scope: resource_name, url: session_path(resource_name) do |f| %>
+      <%= f.govuk_error_summary %>
+
+      <div class="app-container-outline">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= f.govuk_email_field :email,
+                  label: { text: "Email address", size: "m" },
+                  autofocus: true,
+                  autocomplete: "email",
+                  spellcheck: false %>
+
+            <%= f.govuk_password_field :password,
+                  label: { text: "Password", size: "m" },
+                  autocomplete: "current-password" %>
+
+            <% if devise_mapping.rememberable? %>
+              <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, legend: nil, small: true do %>
+                <%= f.govuk_check_box :remember_me, 1, 0, multiple: false, label: { text: "Remember me" } %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <%= f.govuk_submit "Sign in" %>
+      </div>
+    <% end %>
+
+    <%= render "devise/shared/links" %>
+  </div>
+</div>
