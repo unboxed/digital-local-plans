@@ -7,6 +7,7 @@ class TimetableMetadataForm
   attribute :reference, :string
   attribute :name, :string
   attribute :description, :string
+  attribute :local_planning_authorities, :string
   attribute :period_start_year, :integer
   attribute :period_end_year, :integer
   attribute :documentation_url, :string
@@ -33,6 +34,7 @@ class TimetableMetadataForm
       reference: timetable&.reference,
       name: timetable&.name,
       description: timetable&.description,
+      local_planning_authorities: timetable&.local_planning_authorities,
       period_start_year: timetable&.period_start_year,
       period_end_year: timetable&.period_end_year,
       documentation_url: timetable&.documentation_url,

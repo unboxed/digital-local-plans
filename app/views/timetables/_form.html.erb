@@ -16,6 +16,19 @@
               label: { text: "Description", size: "m" },
               hint: { text: "Enter a short description of the matters that the plan is to deal with." } %>
 
+        <%= f.govuk_text_field :local_planning_authorities,
+              label: { text: "Local planning authorities", size: "m" },
+              hint: -> {
+                safe_join([
+                  tag.p("Enter the GSS code for the local planning authority area that this plan covers. For a joint plan, enter each GSS code separated by a semi-colon. For example:",
+                        class: "govuk-body govuk-hint govuk-!-margin-bottom-2"),
+                  tag.ul(class: "govuk-list govuk-list--bullet govuk-hint govuk-!-margin-bottom-0") do
+                    safe_join([tag.li("E60000001"), tag.li("E60000132;E60000133;E60000135;E60000136")])
+                  end
+                ])
+              },
+              spellcheck: false %>
+
         <%= f.govuk_text_field :period_start_year,
               label: { text: "Plan period start year", size: "m" },
               hint: { text: "For example, 2024" },
