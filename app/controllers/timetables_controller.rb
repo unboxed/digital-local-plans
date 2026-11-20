@@ -35,6 +35,7 @@ class TimetablesController < ApplicationController
 
     if Timetables::InitializeTimetableWithEvents.call(timetable: @timetable, form: @form)
       redirect_to home_path
+      flash[:success] = "Timetable created"
     else
       render :new, status: :unprocessable_content
     end
@@ -45,6 +46,7 @@ class TimetablesController < ApplicationController
 
     if @form.save(@timetable)
       redirect_to home_path
+      flash[:success] = "Timetable updated"
     else
       render :edit, status: :unprocessable_content
     end
