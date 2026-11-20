@@ -1,11 +1,11 @@
 {
-	"formatter": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true
-	},
-	"files": {
-		"includes": ["**", "!package.json"]
-	}
+  "formatter": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true
+  },
+  "files": {
+    "includes": ["**", "!package.json"]
+  }
 }
