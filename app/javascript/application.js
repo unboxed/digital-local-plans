@@ -5,8 +5,8 @@ import { initAll } from "govuk-frontend";
 initAll();
 
 document.addEventListener("click", (event) => {
-  const link = event.target.closest("[data-open-in-new-tab]")
-  if (!link) return
+	const link = event.target.closest("[data-open-in-new-tab]");
+	if (!link) return;
 
-  window.open(link.dataset.openInNewTab, "_blank", "noopener")
-})
+	window.open(link.dataset.openInNewTab, "_blank", "noopener");
+});
