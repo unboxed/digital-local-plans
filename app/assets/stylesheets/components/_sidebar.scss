@@ -47,20 +47,18 @@ body:has(.bops-fullwidth-container) {
       border-right: 1px solid $bops-blue-border;
       overflow-y: auto;
       background-color: $bops-light-blue-background;
-      padding: 20px;
-      font-size: 1rem;
+      padding: govuk-spacing(4);
 
       .govuk-link {
-        font-size: 1rem;
         text-decoration: none;
 
         &:visited {
-          color: #1d70b8;
+          color: $govuk-link-colour;
         }
 
         &:active,
         &[aria-current="page"] {
-          color: #0b0c0c;
+          color: $govuk-text-colour;
         }
       }
     }
@@ -81,7 +79,7 @@ body:has(.bops-fullwidth-container) {
 
     &.bops-sidebar__task--active .govuk-link {
       font-weight: bold;
-      color: #0b0c0c !important;
+      color: $govuk-text-colour;
     }
   }
 }
