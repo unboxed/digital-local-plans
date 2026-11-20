@@ -14,8 +14,16 @@ class TimetableMetadataForm
   attribute :notes, :string
 
   validates :period_start_year, :period_end_year,
-    numericality: {only_integer: true, in: 1900..2100, message: "Enter a year in the format YYYY, for example 2024"},
+    numericality: {only_integer: true, in: 2010..2100, message: "Enter a year between 2010 and 2100, for example 2024"},
     allow_blank: true
+
+  validates :reference, presence: {message: "Enter a reference"}
+  validates :name, presence: {message: "Enter a name"}
+
+  validates :reference, length: {maximum: 50, message: 'Reference must be less than 50 characters'}, allow_blank: true
+  validates :name, length: {maximum: 200, message: 'Name must be less than 200 characters'}, allow_blank: true
+  validates :documentation_url, :document_url, length: {maximum: 1000, message: 'Documentation URL must be less than 1000 characters'}, allow_blank: true
+  validates :description, :notes, length: {maximum: 2000, message: 'Description must be less than 1000 characters'}, allow_blank: true
 
   validate :end_year_not_before_start_year
   validate :end_year_in_future
