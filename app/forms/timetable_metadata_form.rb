@@ -20,10 +20,10 @@ class TimetableMetadataForm
   validates :reference, presence: {message: "Enter a reference"}
   validates :name, presence: {message: "Enter a name"}
 
-  validates :reference, length: {maximum: 50, message: 'Reference must be less than 50 characters'}, allow_blank: true
-  validates :name, length: {maximum: 200, message: 'Name must be less than 200 characters'}, allow_blank: true
-  validates :documentation_url, :document_url, length: {maximum: 1000, message: 'Documentation URL must be less than 1000 characters'}, allow_blank: true
-  validates :description, :notes, length: {maximum: 2000, message: 'Description must be less than 1000 characters'}, allow_blank: true
+  validates :reference, length: {maximum: 50, message: "Reference must be less than 50 characters"}, allow_blank: true
+  validates :name, length: {maximum: 200, message: "Name must be less than 200 characters"}, allow_blank: true
+  validates :documentation_url, :document_url, length: {maximum: 1000, message: "Documentation URL must be less than 1000 characters"}, allow_blank: true
+  validates :description, :notes, length: {maximum: 2000, message: "Description must be less than 1000 characters"}, allow_blank: true
 
   validate :end_year_not_before_start_year
   validate :end_year_in_future
