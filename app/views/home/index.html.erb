@@ -1,16 +1,18 @@
 <h1 class="govuk-heading-m">Welcome</h1>
 
-<% if @timetable %>
 <ul class="govuk-list govuk-list--bullet">
-  <li class="govuk-!-margin-bottom-2">
-    <%= govuk_link_to 'View and update your digital local plan metadata', edit_timetable_path(@timetable) %>
-  </li>
-  <li>
-    <%= govuk_link_to 'View and update your digital local plan timetable', timetables_path %>
-  </li>
+  <% if @timetable %>
+
+    <li class="govuk-!-margin-bottom-2">
+      <%= govuk_link_to 'View and update your digital local plan metadata', edit_timetable_path(@timetable) %>
+    </li>
+    <li>
+      <%= govuk_link_to 'View and update your digital local plan timetable', timetables_path %>
+    </li>
+
+  <% else %>
+
+    <li><%= govuk_link_to 'Start a new timetable', new_timetable_path %></li>
+
+  <% end %>
 </ul>
-<% else %>
-<ul class="govuk-list govuk-list--bullet">
-  <li><%= govuk_link_to 'Start a new timetable', new_timetable_path %></li>
-</ul>
-<% end %>
