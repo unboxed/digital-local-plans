@@ -1,25 +1,32 @@
-<%- if controller_name != 'sessions' %>
-  <p class="govuk-body-s"><%= link_to "Log in", new_session_path(resource_name) %></p>
-<% end %>
+<ul class="govuk-list">
+  <%- if controller_name != 'sessions' %>
+    <li><%= govuk_link_to "Sign in", new_session_path(resource_name) %></li>
+  <% end %>
 
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <p class="govuk-body-s"><%= link_to "Sign up", new_registration_path(resource_name) %></p>
-<% end %>
+  <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+    <li><%= govuk_link_to "Create an account", new_registration_path(resource_name) %></li>
+  <% end %>
 
-<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <p class="govuk-body-s"><%= link_to "Forgot your password?", new_password_path(resource_name) %></p>
-<% end %>
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <li><%= govuk_link_to "Forgotten your password?", new_password_path(resource_name) %></li>
+  <% end %>
 
-<%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-  <p class="govuk-body-s"><%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name) %></p>
-<% end %>
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+    <li><%= govuk_link_to "Resend confirmation email", new_confirmation_path(resource_name) %></li>
+  <% end %>
 
-<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-  <p class="govuk-body-s"><%= link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name) %></p>
-<% end %>
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+    <li><%= govuk_link_to "Resend unlock email", new_unlock_path(resource_name) %></li>
+  <% end %>
+</ul>
 
 <%- if devise_mapping.omniauthable? %>
-  <%- resource_class.omniauth_providers.each do |provider| %>
-    <p class="govuk-body-s"><%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %></p>
-  <% end %>
+  <div class="govuk-button-group">
+    <%- resource_class.omniauth_providers.each do |provider| %>
+      <%= govuk_button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}",
+            omniauth_authorize_path(resource_name, provider),
+            secondary: true,
+            data: { turbo: false } %>
+    <% end %>
+  </div>
 <% end %>

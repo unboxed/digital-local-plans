@@ -1,36 +1,45 @@
-<h2 class="govuk-heading-m">Sign up</h2>
+<%= content_for :page_title, "Create an account" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <%= f.fields_for :organisation, resource.organisation || resource.build_organisation do |o| %>
-    <div class="field">
-      <p class="govuk-body-s"><%= o.label :name, "Organisation name" %></p>
-      <p><%= o.text_field :name, autofocus: true, autocomplete: "organization" %></p>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="app-page-header">
+      <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Create an account</h1>
+      </div>
     </div>
-  <% end %>
 
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :email %></p>
-    <p><%= f.email_field :email, autocomplete: "email" %></p>
-  </div>
+    <%= form_with model: resource, scope: resource_name, url: registration_path(resource_name) do |f| %>
+      <%= f.govuk_error_summary %>
 
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p class="govuk-body-s"><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+      <div class="app-container-outline">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= f.fields_for :organisation, resource.organisation || resource.build_organisation do |o| %>
+              <%= o.govuk_text_field :name,
+                    label: { text: "Organisation name", size: "m" },
+                    autofocus: true,
+                    autocomplete: "organization" %>
+            <% end %>
+
+            <%= f.govuk_email_field :email,
+                  label: { text: "Email address", size: "m" },
+                  autocomplete: "email",
+                  spellcheck: false %>
+
+            <%= f.govuk_password_field :password,
+                  label: { text: "Password", size: "m" },
+                  hint: (@minimum_password_length ? { text: "Must be at least #{@minimum_password_length} characters" } : {}),
+                  autocomplete: "new-password" %>
+
+            <%= f.govuk_password_field :password_confirmation,
+                  label: { text: "Confirm password", size: "m" },
+                  autocomplete: "new-password" %>
+          </div>
+        </div>
+        <%= f.govuk_submit "Create account" %>
+      </div>
     <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-  </div>
 
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
+    <%= render "devise/shared/links" %>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
