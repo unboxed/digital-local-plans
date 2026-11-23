@@ -1,4 +1,4 @@
 en:
   timetables:
     warnings:
-      insufficient_gap: "%{from_name} should come at least %{gap_label} after %{to_name}"
+      insufficient_gap: "%{to_name} should come at least %{gap_label} after %{from_name}"
