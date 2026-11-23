@@ -5,7 +5,7 @@ en:
         timetable:
           attributes:
             base:
-              insufficient_gap: "%{to_name} should come at least %{gap_label} after %{from_name}"              
+              insufficient_gap: "%{to_name} should come at least %{gap_label} after %{from_name}"
               out_of_chronology: "%{to_name} cannot come before %{from_name}"
 
   activemodel:
