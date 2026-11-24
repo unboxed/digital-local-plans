@@ -34,8 +34,7 @@ class TimetablesController < ApplicationController
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
     if Timetables::InitializeTimetableWithEvents.call(timetable: @timetable, form: @form)
-      redirect_to home_path
-      flash[:success] = "Timetable created"
+      redirect_to home_path, flash: {success: "Timetable created"}
     else
       render :new, status: :unprocessable_content
     end
@@ -45,8 +44,7 @@ class TimetablesController < ApplicationController
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
     if @form.save(@timetable)
-      redirect_to home_path
-      flash[:success] = "Timetable updated"
+      redirect_to home_path, flash: {success: "Timetable created"}
     else
       render :edit, status: :unprocessable_content
     end
