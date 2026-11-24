@@ -1,18 +1,39 @@
-<h1 class="govuk-heading-m">Welcome</h1>
+<%= content_for :page_title, @timetable ? @timetable.name : "Set up your local plan" %>
 
-<ul class="govuk-list govuk-list--bullet">
-  <% if @timetable %>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <% if @timetable %>
+      <div class="app-page-header">
+        <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+          <h1 class="govuk-heading-l govuk-!-margin-bottom-0"><%= @timetable.name %></h1>
+          <span class="govuk-caption-l">(<%= @timetable.reference %>)</span>
+        </div>
+      </div>
 
-    <li class="govuk-!-margin-bottom-2">
-      <%= govuk_link_to 'View and update your digital local plan metadata', edit_timetable_path(@timetable) %>
-    </li>
-    <li>
-      <%= govuk_link_to 'View and update your digital local plan timetable', timetables_path %>
-    </li>
+      <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+        <%= govuk_link_to "Plan details", edit_timetable_path(@timetable), no_visited_state: true %>
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-6">
+        View and update your plan’s name, description, plan period and document links.
+      </p>
 
-  <% else %>
+      <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+        <%= govuk_link_to "Timetable", timetables_path, no_visited_state: true %>
+      </h2>
+      <p class="govuk-body">
+        View and update the stages and dates in your plan’s timetable.
+      </p>
+    <% else %>
+      <div class="app-page-header">
+        <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+          <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Set up your local plan</h1>
+        </div>
+      </div>
 
-    <li><%= govuk_link_to 'Start a new timetable', new_timetable_path %></li>
+      <p class="govuk-body">You have not added a local plan yet.</p>
+      <p class="govuk-body">Start by entering your plan’s details. You can then add your timetable.</p>
 
-  <% end %>
-</ul>
+      <%= govuk_button_link_to "Add your plan", new_timetable_path %>
+    <% end %>
+  </div>
+</div>

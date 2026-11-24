@@ -1,42 +1,57 @@
-<h2 class="govuk-heading-m">Edit <%= resource_name.to_s.humanize %></h2>
+<%= content_for :page_title, "Your account" %>
+<%= content_for :before_content, govuk_back_link_to(home_path) %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="app-page-header">
+      <div class="app-page-header__title-row govuk-!-margin-bottom-6">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Your account</h1>
+      </div>
+    </div>
 
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+    <%= form_with model: resource, scope: resource_name, url: registration_path(resource_name), method: :put do |f| %>
+      <%= f.govuk_error_summary %>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+      <div class="app-container-outline">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+            <%= f.govuk_email_field :email,
+                  label: { text: "Email address", size: "m" },
+                  autocomplete: "email",
+                  spellcheck: false %>
 
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :password %> <i>(leave blank if you don't want to change it)</i></p>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-    <% if @minimum_password_length %>
-      <p><em><%= @minimum_password_length %> characters minimum</em></p>
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <%= govuk_inset_text(text: "We’ve sent a confirmation link to #{resource.unconfirmed_email}. Your email address will change once you’ve confirmed it.") %>
+            <% end %>
+
+            <%= f.govuk_password_field :password,
+                  label: { text: "New password", size: "m" },
+                  hint: { text: ["Leave blank if you do not want to change it.", (@minimum_password_length && "Must be at least #{@minimum_password_length} characters.")].compact.join(" ") },
+                  autocomplete: "new-password" %>
+
+            <%= f.govuk_password_field :password_confirmation,
+                  label: { text: "Confirm new password", size: "m" },
+                  autocomplete: "new-password" %>
+
+            <%= f.govuk_password_field :current_password,
+                  label: { text: "Current password", size: "m" },
+                  hint: { text: "We need your current password to confirm your changes." },
+                  autocomplete: "current-password" %>
+          </div>
+        </div>
+        <%= f.govuk_submit "Save changes" %>
+      </div>
     <% end %>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">Delete your account</h2>
+    <p class="govuk-body">This will permanently delete your account. You cannot undo this.</p>
+
+    <%= govuk_button_to "Delete account",
+          registration_path(resource_name),
+          method: :delete,
+          warning: true,
+          form: { data: { turbo_confirm: "Are you sure you want to delete your account?" } } %>
   </div>
-
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p class="govuk-body-s"><%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i></p>
-    <p><%= f.password_field :current_password, autocomplete: "current-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3 class="govuk-heading-m">Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>
