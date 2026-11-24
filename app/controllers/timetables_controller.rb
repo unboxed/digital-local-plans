@@ -34,7 +34,7 @@ class TimetablesController < ApplicationController
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
     if Timetables::InitializeTimetableWithEvents.call(timetable: @timetable, form: @form)
-      redirect_to home_path
+      redirect_to home_path, flash: {success: "Timetable created"}
     else
       render :new, status: :unprocessable_content
     end
@@ -44,7 +44,7 @@ class TimetablesController < ApplicationController
     @form = TimetableMetadataForm.new(timetable_metadata_params)
 
     if @form.save(@timetable)
-      redirect_to home_path
+      redirect_to home_path, flash: {success: "Timetable created"}
     else
       render :edit, status: :unprocessable_content
     end
@@ -67,7 +67,7 @@ class TimetablesController < ApplicationController
 
   def timetable_metadata_params
     params.expect(timetable_metadata_form:
-      [:reference, :name, :description, :period_start_year, :period_end_year,
+      [:reference, :name, :description, :local_planning_authorities, :period_start_year, :period_end_year,
         :documentation_url, :document_url, :notes])
   end
 end
