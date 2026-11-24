@@ -11,6 +11,8 @@ class EditTimetableEventForm
   validates :reference, presence: true
 
   validate :validate_event_date
+  validate :validate_entry_date
+  validate :validate_actual_date
   validate :validate_future_and_max_dates
 
   def self.build_from_event(event)
@@ -90,8 +92,24 @@ class EditTimetableEventForm
   def validate_event_date
     if event_date_day.blank? || event_date_month.blank? || event_date_year.blank?
       errors.add(:event_date, :blank)
-    elsif parse_date(event_date_year, event_date_month, event_date_day).nil?
+    elsif event_date.nil?
       errors.add(:event_date, :invalid)
+    end
+  end
+
+  def validate_actual_date
+    return if actual_date_day.blank? && actual_date_month.blank? && actual_date_year.blank?
+
+    if actual_date.nil?
+      errors.add(:actual_date, :invalid)
+    end
+  end
+
+  def validate_entry_date
+    if entry_date_day.blank? || entry_date_month.blank? || entry_date_year.blank?
+      errors.add(:entry_date, :blank)
+    elsif entry_date.nil?
+      errors.add(:entry_date, :invalid)
     end
   end
 

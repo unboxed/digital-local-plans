@@ -5,7 +5,7 @@ en:
         timetable:
           attributes:
             base:
-              insufficient_gap: "%{from_name} should come at least %{gap_label} after %{to_name}"
+              insufficient_gap: "%{to_name} should come at least %{gap_label} after %{from_name}"
               out_of_chronology: "%{to_name} cannot come before %{from_name}"
 
   activemodel:
@@ -15,8 +15,13 @@ en:
           attributes:
             reference:
               blank: "Enter a unique reference"
+            entry_date:
+              blank: "Enter an entry date"
+              invalid: "Enter a valid entry date"
             event_date:
               blank: "Enter a planned date"
               invalid: "Enter a valid planned date"
               not_in_future: "The planned date must be in the future"
               too_far_in_future: "The planned date must be before 2050"
+            actual_date:
+              invalid: "Enter a valid actual date"

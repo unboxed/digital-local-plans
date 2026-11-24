@@ -2,6 +2,7 @@
 
 class TimetableEvent < ApplicationRecord
   after_initialize :prefill_reference, if: :new_record?
+  after_initialize :prefill_entry_date, if: :new_record?
   before_save :set_entry_date, unless: :new_record?
 
   belongs_to :timetable
@@ -48,6 +49,10 @@ class TimetableEvent < ApplicationRecord
 
   def set_entry_date
     self.entry_date = Date.current if (changed - ["entry_date"]).any?
+  end
+
+  def prefill_entry_date
+    self.entry_date ||= Date.current
   end
 
   def prefill_reference
