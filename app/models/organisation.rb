@@ -7,6 +7,8 @@ class Organisation < ApplicationRecord
   validates :name, presence: true, uniqueness: { case_sensitive: false }
   normalizes :name, with: ->(name) { name.squish }
 
+  scope :active, -> { where(end_date: nil).or(where(end_date: Date.current..)) }
+
   def self.find_or_initialize_by_name(name)
     name = name.to_s.squish
     where("LOWER(name) = ?", name.downcase).first_or_initialize(name:)
