@@ -4,11 +4,15 @@ class Organisation < ApplicationRecord
   has_many :users, dependent: :destroy
   has_many :timetables, dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { case_sensitive: false }
+  normalizes :name, with: ->(name) { name.squish }
+
+  def self.find_or_initialize_by_name(name)
+    name = name.to_s.squish
+    where("LOWER(name) = ?", name.downcase).first_or_initialize(name:)
+  end
 
   def current_timetable
-    timetables.last
-    # timetable.upcoming.first
-    # temporary change until we create initialisation form for timetable data
+    timetables.order(:created_at).last
   end
 end

@@ -2,8 +2,11 @@
 
 class User < ApplicationRecord
   belongs_to :organisation
-  accepts_nested_attributes_for :organisation
 
-  devise :database_authenticatable, :registerable,
+  def organisation_attributes=(attributes)
+    self.organisation = Organisation.find_or_initialize_by_name(attributes[:name])
+  end
+
+    devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :validatable
 end

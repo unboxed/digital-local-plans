@@ -5,6 +5,6 @@ FactoryBot.define do
     name { "Unboxed" }
     email { "dlp@unboxed.co" }
 
-    initialize_with { Organisation.find_or_create_by(email:) }
+    initialize_with { Organisation.find_or_initialize_by_name(name) }
   end
 end
