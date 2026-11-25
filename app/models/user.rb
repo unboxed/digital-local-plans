@@ -3,10 +3,9 @@
 class User < ApplicationRecord
   belongs_to :organisation
 
-  def organisation_attributes=(attributes)
-    self.organisation = Organisation.find_or_initialize_by_name(attributes[:name])
-  end
+  validates :organisation_id, presence: {message: "Select your organisation"}
+  validates :organisation, presence: true, if: :organisation_id?
 
-    devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :validatable
 end

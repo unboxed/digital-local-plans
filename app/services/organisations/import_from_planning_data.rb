@@ -34,14 +34,14 @@ module Organisations
       table = CSV.parse(csv, headers: true)
 
       missing = REQUIRED_HEADERS - table.headers
-      raise ImportError, "CSV missing columns: #{missing.join(', ')}" if missing.any?
+      raise ImportError, "CSV missing columns: #{missing.join(", ")}" if missing.any?
 
       table.filter_map do |row|
         next if row["local-planning-authority"].blank?
 
         {
           name: row["name"].squish,
-          reference: "#{row['dataset']}:#{row['reference']}",
+          reference: "#{row["dataset"]}:#{row["reference"]}",
           local_planning_authority: row["local-planning-authority"],
           end_date: row["end-date"].presence
         }

@@ -14,15 +14,18 @@
       <div class="app-container-outline">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
-            <%= f.fields_for :organisation, resource.organisation || resource.build_organisation do |o| %>
-              <%= o.govuk_text_field :name,
-                    label: { text: "Organisation name", size: "m" },
-                    autofocus: true,
-                    autocomplete: "organization" %>
-            <% end %>
+            <%= f.govuk_collection_select :organisation_id,
+                  Organisation.active.order(:name),
+                  :id,
+                  :name,
+                  options: { include_blank: "Select your organisation" },
+                  label: { text: "Organisation", size: "m" },
+                  hint: { text: "The local planning authority you work for" },
+                  autofocus: true %>
 
             <%= f.govuk_email_field :email,
                   label: { text: "Email address", size: "m" },
+                  hint: { text: "Your work email address" },
                   autocomplete: "email",
                   spellcheck: false %>
 
