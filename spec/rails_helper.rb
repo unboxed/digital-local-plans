@@ -4,6 +4,7 @@
 require "spec_helper"
 require "factory_bot_rails"
 require "shoulda/matchers"
+require "webmock/rspec"
 
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
