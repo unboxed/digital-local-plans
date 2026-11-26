@@ -8,8 +8,8 @@ class Organisation < ApplicationRecord
 
   validates :name, presence: true
 
-  scope :active, -> { where.not(reference: nil).where(end_date: nil).or(where.not(reference: nil).where(end_date: Date.current..)) }
-
+  scope :active, -> { where.not(reference: nil).where(end_date: [nil, Date.current..]) }
+  
   def current_timetable
     timetables.order(:created_at).last
   end

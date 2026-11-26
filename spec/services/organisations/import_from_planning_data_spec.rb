@@ -19,12 +19,17 @@ RSpec.describe Organisations::ImportFromPlanningData do
     CSV
   end
 
-  def fetcher(local_authorities: local_authority_csv)
-    ->(url) { url.include?("national-park-authority") ? national_park_csv : local_authorities }
+  def stub_dataset(dataset, **response)
+    stub_request(:get, "#{described_class::BASE_URL}/#{dataset}.csv").to_return(**response)
   end
 
-  def import(**options)
-    described_class.call(fetch: fetcher(**options), minimum: 1)
+  def import(minimum: 1)
+    described_class.call(minimum:)
+  end
+
+  before do
+    stub_dataset("local-authority", body: local_authority_csv)
+    stub_dataset("national-park-authority", body: national_park_csv)
   end
 
   it "imports planning authorities from both datasets" do
@@ -59,24 +64,32 @@ RSpec.describe Organisations::ImportFromPlanningData do
 
   it "updates existing records instead of duplicating them" do
     import
+
     renamed = local_authority_csv.sub("New Forest District Council", "New Forest Council")
-    import(local_authorities: renamed)
+    stub_dataset("local-authority", body: renamed)
+    import
 
     expect(Organisation.count).to eq(3)
     expect(Organisation.find_by(reference: "local-authority:NEW").name).to eq("New Forest Council")
   end
 
   it "aborts without writing when too few organisations are found" do
-    expect { described_class.call(fetch: fetcher, minimum: 10) }
+    expect { import(minimum: 10) }
       .to raise_error(described_class::ImportError, /Only 3 organisations/)
 
     expect(Organisation.count).to eq(0)
   end
 
   it "aborts when the CSV format changes" do
-    broken = "dataset,title\nlocal-authority,Somewhere\n"
+    stub_dataset("local-authority", body: "dataset,title\nlocal-authority,Somewhere\n")
 
-    expect { import(local_authorities: broken) }
-      .to raise_error(described_class::ImportError, /missing columns/)
+    expect { import }.to raise_error(described_class::ImportError, /missing columns/)
+  end
+
+  it "aborts without writing when a download fails" do
+    stub_dataset("national-park-authority", status: 500)
+
+    expect { import }.to raise_error(OpenURI::HTTPError)
+    expect(Organisation.count).to eq(0)
   end
 end
