@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_125414) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_104436) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,7 +19,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_125414) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "reference"
+    t.string "local_planning_authority"
+    t.date "end_date"
     t.index ["email"], name: "index_organisations_on_email", unique: true
+    t.index ["reference"], name: "index_organisations_on_reference", unique: true
   end
 
   create_table "timetable_events", force: :cascade do |t|

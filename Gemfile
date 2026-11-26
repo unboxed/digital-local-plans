@@ -66,3 +66,7 @@ gem "devise", "~> 5.0"
 
 gem "csv"
 gem "rubyzip"
+
+group :test do
+  gem "webmock"
+end
