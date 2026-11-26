@@ -29,7 +29,7 @@
                   autocomplete: "current-password" %>
 
             <% if devise_mapping.rememberable? %>
-              <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, legend: nil, small: true do %>
+              <%= f.govuk_check_boxes_fieldset :remember_me, multiple: false, small: true do %>
                 <%= f.govuk_check_box :remember_me, 1, 0, multiple: false, label: { text: "Remember me" } %>
               <% end %>
             <% end %>
